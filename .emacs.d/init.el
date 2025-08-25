@@ -121,8 +121,8 @@
 
 	(bg-paren-match magenta-intense)
 	(bg-prose-block-delimiter  unspecified)  ; source code block (top face)
-	(bg-prose-block-contents   "#0d0d0d") ; sourec code block (background face)
-	(fg-line-number-inactive "gray50")
+	(bg-prose-block-contents   unspecified) ; sourec code block (background face)
+	(fg-line-number-inactive unspecified)
         (fg-line-number-active fg-main)
         (bg-line-number-inactive unspecified)
         (bg-line-number-active unspecified)
@@ -823,7 +823,7 @@ DIRECTION should be 'forward or 'backward."
           (green-color (modus-themes-get-color-value 'green-intense))
           (blue-color (modus-themes-get-color-value 'blue-intense))
           (yellow-color (modus-themes-get-color-value 'yellow-intense))
-          (magenta-color (modus-themes-get-color-value 'magenta-intense)))
+          (magenta-color (modus-themes-get-color-value 'magenta)))
       
       ;; Define custom faces using Modus colors - foreground only
       (defface vterm-modus-error-face
@@ -843,7 +843,7 @@ DIRECTION should be 'forward or 'backward."
         "UUID face for vterm using Modus colors.")
       
       (defface vterm-modus-service-face
-        `((t (:foreground ,magenta-color :weight bold)))
+        `((t (:foreground ,magenta-color :weight normal)))
         "Service name face for vterm using Modus colors.")
       
       ;; Apply highlights
@@ -878,7 +878,6 @@ DIRECTION should be 'forward or 'backward."
 
 ;; (modus-themes-load-theme 'modus-operandi)
 
-
 (use-package svg-lib)
 
 (use-package mini-echo
@@ -903,8 +902,9 @@ DIRECTION should be 'forward or 'backward."
 
 ;; Add to mini-echo persistent rules
 (setq mini-echo-persistent-rule
-      '(:long ("git-icon" "major-mode" "shrink-path" "vcs" "buffer-position" "buffer-size" "flymake")
-        :short ("git-icon" "buffer-name" "buffer-position" "flymake")))
+      '(:long ("git-icon" "major-mode" "shrink-path" "buffer-position" "flymake")
+        ;; :short ("git-icon" "buffer-name" "buffer-position" "flymake")
+	))
 
 ;; Update colors when theme changes
 (defun mini-echo-update-git-colors ()
