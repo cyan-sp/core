@@ -115,13 +115,18 @@
 
 (use-package modus-themes :ensure t)
 
+;; As above, but with a purple style
 (setq modus-themes-common-palette-overrides
       '((comment yellow-faint)
+
+	(bg-paren-match magenta-intense)
 	(bg-prose-block-delimiter  unspecified)  ; source code block (top face)
-	(bg-prose-block-contents   unspecified) ; sourec code block (background face)
-	(fg-line-number-active fg-main)		; clener line number
-        (bg-line-number-inactive unspecified) ; clener line number
-        (bg-line-number-active unspecified) ; clener line number
+	(bg-prose-block-contents   "#0d0d0d") ; sourec code block (background face)
+	(fg-line-number-inactive "gray50")
+        (fg-line-number-active fg-main)
+        (bg-line-number-inactive unspecified)
+        (bg-line-number-active unspecified)
+	(region ((t :extend nil)))
 	(fg-region unspecified)))
 
 (setq modus-themes-italic-constructs t)
@@ -733,40 +738,10 @@ DIRECTION should be 'forward or 'backward."
     :config
     (diredfl-global-mode 1))
 
-;; As above, but with a purple style
-(setq modus-themes-common-palette-overrides
-      '(;; (bg-mode-line-active bg-lavender)
-        ;; (fg-mode-line-active fg-main)
-        ;; (border-mode-line-active bg-magenta-intense)
-	(comment yellow-faint)
-	;; (bg-paren-match bg-magenta-intense)
-	(bg-paren-match magenta-intense)
-
-	;; (bg-prose-block-delimiter   bg-dim) source code block
-	;; (bg-prose-block-contents  unspecified) source code block
-
-	(bg-prose-block-delimiter  unspecified)  ; source code block (top face)
-	(bg-prose-block-contents   "#0d0d0d") ; sourec code block (background face)
-
-	(fg-line-number-inactive "gray50")
-        (fg-line-number-active fg-main)
-        (bg-line-number-inactive unspecified)
-        (bg-line-number-active unspecified)
-
-	(region ((t :extend nil)))
-	;; (fg-prose-block-delimiter blue)
-	;; (bg-prose-block-contents bg-magenta-nuanced)
-        ;; (bg-prose-block-delimiter bg-lavender)
-        ;; (fg-prose-block-delimiter fg-main)
-	;; (bg-region bg-lavender) ; try to replace `bg-ochre' with `bg-lavender', `bg-sage'
-        (fg-region unspecified)))
-
-
 ;; Do not extend `region' background past the end of the line.
 ;; (custom-set-faces
 ;;  '(region ((t :extend nil))))
 
-(modus-themes-load-theme 'modus-vivendi)
 (use-package elfeed)
 
 
@@ -812,14 +787,6 @@ DIRECTION should be 'forward or 'backward."
 	    "https://xcancel.com/GrimmiVT/rss"
 )))
 
-(setq modus-themes-common-palette-overrides
-      '((bg-region bg-ochre) ; try to replace `bg-ochre' with `bg-lavender', `bg-sage'
-        (fg-region unspecified)))
-
-(setq modus-themes-common-palette-overrides
-      '((bg-prose-block-contents unspecified)
-        (bg-prose-block-delimiter unspeficied)
-        (fg-prose-block-delimiter fg-dim)))
 ;; Disable startup screen
 ;; Disable startup screen and set initial buffer
 (setq inhibit-startup-screen t
