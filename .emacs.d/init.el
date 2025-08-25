@@ -91,11 +91,9 @@
 
 (setq claude-code-toggle-auto-select t)
 
-
 (monet-mode 1)
 
 (setq claude-code-terminal-backend 'vterm)
-
 
 (use-package vertico
   :straight t
@@ -560,7 +558,9 @@ Version 2016-11-22"
 (with-eval-after-load 'org
 (org-babel-do-load-languages
  'org-babel-load-languages
- '((sql . t))))
+ '((sql . t)
+   (shell . t)
+   )))
 
 
 (defun efs/org-mode-setup ()
