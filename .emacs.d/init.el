@@ -720,8 +720,11 @@ DIRECTION should be 'forward or 'backward."
 
 (use-package rainbow-delimiters)
  
+(use-package git-gutter)
+
 (add-hook 'prog-mode-hook (lambda () (rainbow-delimiters-mode +1)
-			    (hl-todo-mode +1)))
+			    (hl-todo-mode +1)
+			    (git-gutter-mode +1)))
 
 (set-register ?i (cons 'file "~/.core/.emacs.d/init.el"))
 
@@ -842,7 +845,106 @@ DIRECTION should be 'forward or 'backward."
    ";; 　　　.(_:;つ/  0401 /　ｶﾀｶﾀ\n"
    ";;  ￣￣￣￣￣＼/＿＿＿＿/\n\n"))
 
-
-
-
 (setq initial-scratch-message (my-scratch-message))
+
+
+(defun vterm-highlight-logs-modus ()
+  "Simple highlighting for vterm logs using Modus theme colors."
+  (interactive)
+  (when (eq major-mode 'vterm-mode)
+    (let ((red-color (modus-themes-get-color-value 'red-intense))
+          (green-color (modus-themes-get-color-value 'green-intense))
+          (blue-color (modus-themes-get-color-value 'blue-intense))
+          (yellow-color (modus-themes-get-color-value 'yellow-intense))
+          (magenta-color (modus-themes-get-color-value 'magenta-intense)))
+      
+      ;; Define custom faces using Modus colors - foreground only
+      (defface vterm-modus-error-face
+        `((t (:foreground ,red-color :weight bold)))
+        "Error face for vterm using Modus colors.")
+      
+      (defface vterm-modus-success-face
+        `((t (:foreground ,green-color :weight bold)))
+        "Success face for vterm using Modus colors.")
+      
+      (defface vterm-modus-timestamp-face
+        `((t (:foreground ,blue-color :weight normal)))
+        "Timestamp face for vterm using Modus colors.")
+      
+      (defface vterm-modus-uuid-face
+        `((t (:foreground ,yellow-color)))
+        "UUID face for vterm using Modus colors.")
+      
+      (defface vterm-modus-service-face
+        `((t (:foreground ,magenta-color :weight bold)))
+        "Service name face for vterm using Modus colors.")
+      
+      ;; Apply highlights
+      (highlight-regexp "Permission denied\\|ERROR\\|FAIL" 'vterm-modus-error-face)
+      (highlight-regexp "BUILD SUCCESSFUL\\|CONFIGURE SUCCESSFUL\\|asignada\\|terminado" 'vterm-modus-success-face)
+      (highlight-regexp "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\} [0-9]\\{2\\}:[0-9]\\{2\\}:[0-9]\\{2\\}" 'vterm-modus-timestamp-face)
+      (highlight-regexp "[a-f0-9]\\{32\\}" 'vterm-modus-uuid-face)
+      (highlight-regexp "esimBait\\|WebHook\\|Esim\\|Grails" 'vterm-modus-service-face)
+      
+      (message "Vterm Modus theme highlighting applied"))))
+
+(defun vterm-clear-highlights ()
+  "Clear all highlights in vterm buffer."
+  (interactive)
+  (unhighlight-regexp t)
+  (message "Vterm highlights cleared"))
+
+;; ;; Update faces when theme changes
+;; (defun vterm-update-modus-faces ()
+;;   "Update vterm highlight faces when Modus theme changes."
+;;   (when (boundp 'vterm-modus-error-face)
+;;     (vterm-clear-highlights)
+;;     (vterm-highlight-logs-modus)))
+
+;; (add-hook 'modus-themes-after-load-theme-hook #'vterm-update-modus-faces)
+
+;; (with-eval-after-load 'vterm
+;;   (define-key vterm-mode-map (kbd "C-c h") #'vterm-highlight-logs-modus)
+;;   (define-key vterm-mode-map (kbd "C-c u") #'vterm-clear-highlights))
+
+(modus-themes-get-color-value 'red-intense)
+
+;; (modus-themes-load-theme 'modus-operandi)
+
+
+(use-package svg-lib)
+
+(use-package mini-echo
+  :config
+  (setq mini-echo-right-padding 5))
+
+;; Git icon segment using SVG with Modus themes colors
+(mini-echo-define-segment "git-icon"
+  "Git branch icon segment with Modus themes colors."
+  :fetch 
+  (when (bound-and-true-p vc-mode)
+    (let ((icon-color (modus-themes-get-color-value 'magenta-intense))
+          (branch-color (modus-themes-get-color-value 'blue-cooler)))
+      (concat
+       (propertize "git" 'display 
+                   (svg-lib-icon "source-branch"
+                                 `(:collection "material"
+                                   :padding 0 :stroke 0 :margin 0 :radius 0
+                                   :foreground ,icon-color)))
+       " "
+       (propertize (substring vc-mode 5) 'face `(:foreground ,branch-color))))))
+
+;; Add to mini-echo persistent rules
+(setq mini-echo-persistent-rule
+      '(:long ("git-icon" "major-mode" "shrink-path" "vcs" "buffer-position" "buffer-size" "flymake")
+        :short ("git-icon" "buffer-name" "buffer-position" "flymake")))
+
+;; Update colors when theme changes
+(defun mini-echo-update-git-colors ()
+  "Update git icon colors when Modus theme changes."
+  (mini-echo-mode -1)
+  (mini-echo-mode 1))
+
+(add-hook 'modus-themes-after-load-theme-hook #'mini-echo-update-git-colors)
+
+(mini-echo-mode)
