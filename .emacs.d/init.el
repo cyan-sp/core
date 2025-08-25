@@ -9,16 +9,7 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "ubuntu mono" :weight 'normal    :height 165)
-
-;; (set-face-attribute 'default nil :family "ubuntu mono" :weight 'normal    :height 165)
-
-;; (set-face-attribute 'default nil :family "julia mono" :weight 'normal    :height 165)
-
-(set-face-attribute 'default nil :family "udev gothic nf" :weight 'normal    :height 165)
-
-;; (set-face-attribute 'default nil :family "plemol jp console nf" :weight 'normal    :height 155)
-
+(set-face-attribute 'default nil :family "pragmata pro" :weight 'normal    :height 165)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
@@ -293,18 +284,11 @@ Version 2016-11-22"
 
 (meow-leader-define-key
  '("u" . vundo)
- ;; '("f l" . consult-line)
- ;; '("SPC" . popper-toggle)
- ;; '("n" . org-roam-node-find)
  '("r" . jump-to-register)
- ;; '("n n " . org-roam-node-find)
  '("e" . elfeed)
  '("g" . magit-status)
  '("a" . org-agenda)
- '("p" . projectile-command-map)
- '("f" . project-find-file)
- '("s" . consult-grep);; '("s" . )
- )
+ '("f" . project-find-file))
 
 (use-package groovy-mode
   :ensure t)
@@ -402,30 +386,6 @@ Version 2016-11-22"
 
 (use-package sqlite3
   :ensure t)
-
- 
-
-
-
-;; (use-package org-roam
-;;   :ensure t
-;;   :custom
-;;   (org-roam-directory (file-truename "~/org-roam/"))
-;;   ;; :bind (("C-c n l" . org-roam-buffer-toggle)
-;;   ;;        ("C-c n f" . org-roam-node-find)
-;;   ;;        ("C-c n g" . org-roam-graph)
-;;   ;;        ("C-c n i" . org-roam-node-insert)
-;;   ;;        ("C-c n c" . org-roam-capture)
-;;   ;;        ;; Dailies
-;;   ;;        ("C-c n j" . org-roam-dailies-capture-today))
-;;   :config
-;;   ;; If you're using a vertical completion framework, you might want a more informative completion interface
-;;   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-;; 	;; (setq org-roam-db-location "~/.emacs.d/org-roam.db")
-;;   (org-roam-db-autosync-mode)
-;;   ;; If using org-roam-protocol
-;;   (require 'org-roam-protocol))
-
 
 ;; (defcustom org-roam-db-location (expand-file-name (locate-user-emacs-file "org-roam.db")))
 
@@ -573,8 +533,6 @@ Version 2016-11-22"
   ;; (org-directory "~/.note/RoamNotes/OrgFiles/")
   ;; :custom
   ;; (org-hide-block-startup t)
-  ;; (org-startup-with-inline-images 'inlineimages)
-  ;; (org-image-actual-width nil)
   )
 
 (with-eval-after-load 'org
