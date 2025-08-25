@@ -764,6 +764,50 @@ DIRECTION should be 'forward or 'backward."
 ;;  '(region ((t :extend nil))))
 
 (modus-themes-load-theme 'modus-vivendi)
+(use-package elfeed)
+
+
+(use-package elfeed
+    :bind (:map elfeed-search-mode-map
+                ("U" . elfeed-update))
+    :config
+    ;; (setq elfeed-db "~/.emacs.d/.elfeed/")
+    (setq elfeed-feeds
+        '("https://protesilaos.com/news.xml"
+            "https://protesilaos.com/codelog.xml"
+            "https://protesilaos.com/advice.xml"
+            "https://protesilaos.com/interpretations.xml"
+            ;; "https://nullprogram.com/feed/"
+            "https://www.reddit.com/r/emacs/.rss"
+            "https://simblob.blogspot.com/feeds/posts/default" ;; Red blob games 
+            "https://planet.emacslife.com/atom.xml"
+            ;; "https://www.reddit.com/r/orgmode.rss"
+            "https://www.reddit.com/r/Anki.rss"
+            ;; "https://ag91.github.io/rss.xml" ;; Where parallels cross
+            "https://www.rousette.org.uk/index.xml" ;; But she is a girl
+            "https://karthinks.com/index.xml"
+            "https://emacstil.com/feed.xml"
+            "https://www.reddit.com/r/lisp.rss"
+            "https://olddeuteronomy.github.io/index.xml"
+            "https://www.reddit.com/r/AnkiComputerScience.rss"
+            "https://whhone.com/index.xml"      ;; https://whhone.com/posts/para-org-mode/
+            ;; "https://emacs.stackexchange.com/feeds"
+            ;; "https://clojure.stackexchange.com/feeds"
+            "https://www.reddit.com/r/Clojure.rss"
+            "https://www.reddit.com/r/Clojurescript.rss"
+            "https://www.reddit.com/r/lisp.rss"
+            "http://gigasquidsoftware.com/atom.xml"
+            "https://studio.tymoon.eu/api/studio/gallery/atom?tag&user=shinmera"
+            ;; "https://tumblr.shinmera.com/rss"
+            ;; "https://www.reddit.com/r/OCD.rss"
+            "https://www.reddit.com/r/menitrust.rss"
+            ;; "https://www.reddit.com/r/radiohead.rss"
+            "https://www.reddit.com/r/thexx.rss"
+	    ;; "https://nitter.net/GrimmiVT/rss"
+	    "https://bsky.app/profile/happypaintings.bsky.social.rss"
+	    "https://bsky.app/profile/olddeuteronomy.bsky.social.rss"
+	    "https://xcancel.com/GrimmiVT/rss"
+)))
 
 (setq modus-themes-common-palette-overrides
       '((bg-region bg-ochre) ; try to replace `bg-ochre' with `bg-lavender', `bg-sage'
