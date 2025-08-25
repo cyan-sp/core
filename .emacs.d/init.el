@@ -117,6 +117,17 @@
 
 (use-package modus-themes :ensure t)
 
+(setq modus-themes-common-palette-overrides
+      '((comment yellow-faint)
+	(bg-prose-block-delimiter  unspecified)  ; source code block (top face)
+	(bg-prose-block-contents   unspecified) ; sourec code block (background face)
+	(fg-line-number-active fg-main)		; clener line number
+        (bg-line-number-inactive unspecified) ; clener line number
+        (bg-line-number-active unspecified) ; clener line number
+	(fg-region unspecified)))
+
+(setq modus-themes-italic-constructs t)
+
 (modus-themes-load-theme 'modus-vivendi)
 
 (use-package meow
@@ -284,11 +295,12 @@ Version 2016-11-22"
 
 (meow-leader-define-key
  '("u" . vundo)
- '("r" . jump-to-register)
+ ;; '("r" . jump-to-register)
  '("e" . elfeed)
  '("g" . magit-status)
  '("a" . org-agenda)
- '("f" . project-find-file))
+ '("f" . project-find-file)
+ '("s" . consult-grep))
 
 (use-package groovy-mode
   :ensure t)
@@ -296,13 +308,14 @@ Version 2016-11-22"
 (use-package centaur-tabs
   :demand
   :config
+  ;; (setq centaur-tabs-style "slant")
+  (setq centaur-tabs-set-modified-marker t)
+  (setq centaur-tabs-set-bar 'over)
   (centaur-tabs-mode t)
-  ;; (setq centaur-tabs-set-icons t)
+  ;; (centaur-tabs-headline-match)
   :bind
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward))
-
-(setq centaur-tabs-set-icons t)
 
 (use-package posframe
   :ensure t)
