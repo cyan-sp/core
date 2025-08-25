@@ -488,12 +488,21 @@ Version 2016-11-22"
 
 (use-package magit
   :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ;fulllscreent
+  ) 
 
 (use-package magit-todos
   :after magit
   :config (magit-todos-mode 1))
 
+(use-package hl-todo)
+
+(setq hl-todo-keyword-faces
+      '(("TODO"   . error)
+        ("FIXME"  . error)
+        ("DEBUG"  . warning)
+        ("GOTCHA" . font-lock-warning-face)
+        ("STUB"   . font-lock-keyword-face)))
 
 (use-package vundo
   :straight (:host github :repo "casouri/vundo")
@@ -650,106 +659,69 @@ Version 2016-11-22"
         (line-num (line-number-at-pos)))
     (insert (format "println \"\\n(O.o) %s :: %d \\n\"" filename line-num))))
 
-(use-package multi-vterm)
-
-(defvar mode-line-cleaner-alist
-    `(
-        (company-mode . "")
-        (yas-minor-mode . " Y")              
-        (smartparens-mode . " ()")
-        (claude-code-mode . "")
-        (eldoc-mode . "")
-        (org-autolist-mode . "")
-	(LaTeX-mode . "")
-        (reftex-mode . "")
-        (highlight-indentation-mode . "")
-        (goggles-mode . "")
-        (activity-watch-mode . "")
-        (buffer-face-mode . "") ;;
-        (mini-modeline-mode . "")
-        (elfeed-show-mode . "")
-        (helpful-mode . "")
-        ;; (dired-by-name-mode . "")
-        (dired-mode . "")
-        (abbrev-mode . "")
-	(counsel-mode . "")
-        (wrap-region-mode . "")
-        (rainbow-mode . "")
-        (which-key-mode . "")
-        (undo-tree-mode . "")
-        (company-box-mode . "")
-        (flycheck-mode . "")
-        (yas-minor-mode . "")
-        (wakatime-mode . "")
-        ;; (auto-revert-mode . "")
-        ;; Major modes
-        ;; (lisp-interaction-mode . " λ")
-        (hi-lock-mode . "")
-        (python-mode . "Py")
-        (emacs-lisp-mode . "")
-        (dot-mode . " .")
-        (scheme-mode . " SCM")
-        (matlab-mode . "M")
-        (org-mode . " ** ")
-        ;; (valign-mode . "")
-        (eldoc-mode . "")
-        (org-cdlatex-mode . "")
-        (org-indent-mode . "")
-        ;; (org-roam-mode . "")
-        (visual-line-mode . "")
-        (latex-mode . "")
-        (projectile-mode . "")
-        (highlight-indent-guides-mode . "")
-        (outline-minor-mode . " [o]")
-        (matlab-functions-have-end-minor-mode . "")
-        ;; (org-roam-ui-mode . " UI")
-        (strokes-mode . "")
-        (flymake-mode . "fly")
-        (god-mode . ,(propertize "God" 'face 'success)))
-    "Alist for `clean-mode-line'.
-    ;; When you add a new element to the alist, keep in mind that you
-    ;; must pass the correct minor/major mode symbol and a string you
-    ;; want to use in the modeline *in lieu of* the original.")
- 
-(defun clean-mode-line ()
-    (cl-loop for cleaner in mode-line-cleaner-alist
-         do (let* ((mode (car cleaner))
-                 (mode-str (cdr cleaner))
-                 (old-mode-str (cdr (assq mode minor-mode-alist))))
-        (when old-mode-str
-            (setcar old-mode-str mode-str))
-        ;; major mode
-        (when (eq mode major-mode)
-            (setq mode-name mode-str)))))
- 
-(add-hook 'after-change-major-mode-hook 'clean-mode-line)
-
 ;; Bind to a key if desired
 (define-key groovy-mode-map (kbd "C-c d") 'insert-groovy-debug-line)
 
 (use-package org-ql)
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun isearch-with-selection (direction)
+  "Start isearch with selected text in the given DIRECTION.
+DIRECTION should be 'forward or 'backward."
+  (let ((selected-text (buffer-substring-no-properties (region-beginning) (region-end))))
+    (deactivate-mark)
+    (goto-char (if (eq direction 'forward) (region-end) (region-beginning)))
+    (if (eq direction 'forward)
+        (isearch-forward nil 1)
+      (isearch-backward nil 1))
+    (isearch-yank-string selected-text)))
+
+;; Deadgrep with selection support
+
+(defun deadgrep-with-selection ()
+  "Run deadgrep with selected text."
+  (interactive)
+  (if (use-region-p)
+      (let ((selected-text (buffer-substring-no-properties (region-beginning) (region-end))))
+        (deactivate-mark)
+        (deadgrep selected-text))
+    (call-interactively #'deadgrep)))
+
+;; Consult-grep with selection support
+(defun consult-grep-with-selection ()
+  "Run consult-grep with selected text."
+  (interactive)
+  (if (use-region-p)
+      (let ((selected-text (buffer-substring-no-properties (region-beginning) (region-end))))
+        (deactivate-mark)
+        (consult-grep nil selected-text))
+    (call-interactively #'consult-grep)))
+
+;; Enhanced emulation alist
 (defconst may-emulation-alist
   `((mark-active
      ,@(let ((m (make-sparse-keymap)))
-	 (define-key m (kbd "C-r") (lambda () (interactive) (message "something random")))
-	 ;; ()
-         ;; (define-key m (kbd "s") (lambda() (interactive) (message (buffer-substring (point) (mark)))))
+	 (define-key m (kbd "C-r") (lambda () (interactive) (isearch-with-selection 'backward)))
+	 (define-key m (kbd "C-s") (lambda () (interactive) (isearch-with-selection 'forward)))
+         ;; Search bindings
+         (define-key m (kbd "M-s o") #'deadgrep-with-selection)            ; Alt+s o for deadgrep
+         (define-key m (kbd "M-s g") #'consult-grep-with-selection)        ; Alt+s g for consult-grep  
+         ;; Your existing bindings
          (define-key m (kbd "M-t") 'my-google-translate-at-point)
-         ;; (define-key m (kbd "M-[") (lambda () (interactive) (surround-define)))
-         (squares-key m (kbd "M-c") (lambda () (interactive) (surround-brackets)))
-         ;; (Define-key m (kbd "M-a") (lambda () (interactive) (meow-append)))
-         ;; (define-key m (kbd "M-s") (lambda () (interactive) (meow-insert)))
-
-         (define-key m (kbd "\"") (lambda () (interactive) (surround-quotes)))
-         ;; (define-key m (kbd "<escape>") (lambda () (interactive) (meow-cancel-selection)))
+	 (define-key m (kbd "\"") (lambda () (interactive) (surround-quotes)))
          m))))
 
-(add-to-list 'emulation-mode-map-alists 'my-emulation-alist)
+(add-to-list 'emulation-mode-map-alists 'may-emulation-alist)
 
-(Use-package rainbow-delimiters)
+
+(global-set-key (kbd "M-s o") 'deadgrep) ; unbinds occur
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package rainbow-delimiters)
  
-(add-hook 'prog-mode-hook (lambda () (rainbow-delimiters-mode +1)))
+(add-hook 'prog-mode-hook (lambda () (rainbow-delimiters-mode +1)
+			    (hl-todo-mode +1)))
 
 (set-register ?i (cons 'file "~/.core/.emacs.d/init.el"))
 
