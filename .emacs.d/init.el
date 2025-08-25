@@ -817,3 +817,32 @@ DIRECTION should be 'forward or 'backward."
       '((bg-prose-block-contents unspecified)
         (bg-prose-block-delimiter unspeficied)
         (fg-prose-block-delimiter fg-dim)))
+;; Disable startup screen
+;; Disable startup screen and set initial buffer
+(setq inhibit-startup-screen t
+      inhibit-startup-message t
+      inhibit-startup-echo-area-message t
+      initial-buffer-choice t)
+
+;; Custom centered scratch message
+(defun my-scratch-message ()
+  "Generate custom scratch message."
+  (concat
+   ";; This buffer is for text that is not saved, and for Lisp evaluation.\n"
+   ";; To create a file, visit it with C-x C-f and enter text in its buffer.\n"
+   ";;\n"
+   ";; 　　　　　 　r /\n"
+   ";; 　 ＿＿ , --ヽ!-- .､＿\n"
+   ";; 　! 　｀/::::;::::ヽ l\n"
+   ";; 　!二二!::／}::::丿ハﾆ|\n"
+   ";; 　!ﾆニ.|:／　ﾉ／ }::::}ｺ\n"
+   ";; 　L二lイ　　0´　0 ,':ﾉｺ\n"
+   ";; 　lヽﾉ/ﾍ､ ''　▽_ノイ ソ\n"
+   ";;  　ソ´ ／}｀ｽ /￣￣￣￣/\n"
+   ";; 　　　.(_:;つ/  0401 /　ｶﾀｶﾀ\n"
+   ";;  ￣￣￣￣￣＼/＿＿＿＿/\n\n"))
+
+
+
+
+(setq initial-scratch-message (my-scratch-message))
