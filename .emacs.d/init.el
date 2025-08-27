@@ -332,29 +332,65 @@ Version 2016-11-22"
               (when my-posframe-timer
                 (cancel-timer my-posframe-timer))
               
-              (let* ((slot (number-to-string (eyebrowse--get 'current-slot nil)))
-                     (nyan (cond ((string= slot "1") "一つ")
-                                 ((string= slot "2") "二つ")
-                                 ((string= slot "3") "三つ")
-                                 ((string= slot "4") "四つ")
-                                 ((string= slot "5") "五つ")
-                                 ((string= slot "6") "六つ")
-                                 ((string= slot "7") "七つ")
-                                 ((string= slot "8") "八つ")
-                                 ((string= slot "9") "九つ")
-                                 (t slot)))) ; fallback
-                (posframe-show "*my-posframe-buffer*"
-                               :string (concat " " nyan " ")
-                               :poshandler #'posframe-poshandler-frame-center
-                               :border-width 1
-                               :border-color "magenta")
-                
-                ;; Set timer to hide after 3 seconds
-                (setq my-posframe-timer
-                      (run-with-timer 3 nil
-                                      (lambda ()
-                                        (posframe-hide "*my-posframe-buffer*")
-                                        (setq my-posframe-timer nil))))))))
+              ;; Use run-with-idle-timer to ensure the switch is complete
+              (run-with-idle-timer 0.1 nil
+                (lambda ()
+                  (let* ((slot (number-to-string (eyebrowse--get 'current-slot nil)))
+                         (nyan (cond ((string= slot "1") "一つ")
+                                     ((string= slot "2") "二つ")
+                                     ((string= slot "3") "三つ")
+                                     ((string= slot "4") "四つ")
+                                     ((string= slot "5") "五つ")
+                                     ((string= slot "6") "六つ")
+                                     ((string= slot "7") "七つ")
+                                     ((string= slot "8") "八つ")
+                                     ((string= slot "9") "九つ")
+                                     (t slot))) ; fallback
+                         ;; Check if we're in a project first
+                         (in-project-p (or
+                                        ;; Check projectile
+                                        (and (fboundp 'projectile-project-p)
+                                             (ignore-errors (projectile-project-p)))
+                                        ;; Check built-in project.el
+                                        (and (fboundp 'project-current)
+                                             (project-current))))
+                         ;; Get project name or current directory
+                         (context-name (if in-project-p
+                                           ;; We're in a project - get project name
+                                           (or
+                                            ;; Method 1: projectile (if available)
+                                            (and (fboundp 'projectile-project-name)
+                                                 (ignore-errors (projectile-project-name)))
+                                            ;; Method 2: built-in project.el
+                                            (and (fboundp 'project-current)
+                                                 (project-current)
+                                                 (file-name-nondirectory 
+                                                  (directory-file-name 
+                                                   (project-root (project-current)))))
+                                            ;; Fallback to current directory name
+                                            (file-name-nondirectory 
+                                             (directory-file-name default-directory)))
+                                         ;; Not in a project - get current directory name
+                                         (file-name-nondirectory 
+                                          (directory-file-name default-directory))))
+                         ;; Construct display string
+                         (display-string (if context-name
+                                             (concat " " nyan " - " context-name " ")
+                                           (concat " " nyan " "))))
+                    
+                    (posframe-show "*my-posframe-buffer*"
+                                   :string display-string
+                                   :poshandler #'posframe-poshandler-frame-center
+                                   :border-width 1
+                                   :border-color "magenta")
+                    
+                    ;; Set timer to hide after 3 seconds
+                    (setq my-posframe-timer
+                          (run-with-timer 3 nil
+                                          (lambda ()
+                                            (posframe-hide "*my-posframe-buffer*")
+                                            (setq my-posframe-timer nil))))))))))
+
 
 
 (use-package eyebrowse
@@ -398,7 +434,6 @@ Version 2016-11-22"
   (if (eq (eyebrowse--get 'current-slot) n)
       (eyebrowse-last-window-config)
     (funcall (intern (format "eyebrowse-switch-to-window-config-%s" n)))))
-
 
 (use-package sqlite3
   :ensure t)
@@ -565,7 +600,10 @@ Version 2016-11-22"
  'org-babel-load-languages
  '((sql . t)
    (shell . t)
+   (python . t)
    )))
+
+(setq org-babel-python-command "python3")
 
 
 (defun efs/org-mode-setup ()
@@ -662,7 +700,7 @@ Version 2016-11-22"
   (interactive)
   (let ((filename (file-name-nondirectory (buffer-file-name)))
         (line-num (line-number-at-pos)))
-    (insert (format "println \"\\n(O.o) %s :: %d \\n\"" filename line-num))))
+    (insert (format "println \"\\n(O.o) %s::%d ${}\\n\"" filename line-num))))
 
 ;; Bind to a key if desired
 (define-key groovy-mode-map (kbd "C-c d") 'insert-groovy-debug-line)
@@ -682,6 +720,9 @@ DIRECTION should be 'forward or 'backward."
     (isearch-yank-string selected-text)))
 
 ;; Deadgrep with selection support
+
+
+(use-package deadgrep)
 
 (defun deadgrep-with-selection ()
   "Run deadgrep with selected text."
