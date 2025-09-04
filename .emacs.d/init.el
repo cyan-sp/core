@@ -1090,39 +1090,18 @@ DIRECTION should be 'forward or 'backward."
 
 (modus-themes-get-color-value 'red-intense)
 
-(use-package svg-lib)
-(use-package mini-echo
-  :config
-  (setq mini-echo-right-padding 5))
+(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
 
-;; Git icon segment using SVG with Modus themes colors
-(mini-echo-define-segment "git-icon"
-  "Git branch icon segment with Modus themes colors."
-  :fetch 
-  (when (bound-and-true-p vc-mode)
-    (let ((icon-color (modus-themes-get-color-value 'magenta-intense))
-          (branch-color (modus-themes-get-color-value 'blue-cooler)))
-      (concat
-       (propertize "git" 'display 
-                   (svg-lib-icon "source-branch"
-                                 `(:collection "material"
-                                   :padding 0 :stroke 0 :margin 0 :radius 0
-                                   :foreground ,icon-color)))
-       " "
-       (propertize (substring vc-mode 5) 'face `(:foreground ,branch-color))))))
+(use-package eaf
+  :load-path "~/.emacs.d/site-lisp/emacs-application-framework/"
+  :straight (eaf
+             :type git
+             :host github
+             :repo "emacs-eaf/emacs-application-framework"
+             :files ("*.el" "*.py" "core" "app" "*.json")
+             :includes (eaf-pdf-viewer eaf-browser) ; Add other apps as needed
+             ;; :pre-build (("python3" "install-eaf.py" "--install" "pdf-viewer" "browser" "--ignore-sys-deps"))
+	     ))
 
-;; Add to mini-echo persistent rules
-(setq mini-echo-persistent-rule
-      '(:long ("git-icon" "major-mode" "shrink-path" "buffer-position" "flymake")
-        ;; :short ("git-icon" "buffer-name" "buffer-position" "flymake")
-	))
+(require 'eaf-browser)
 
-;; Update colors when theme changes
-(defun mini-echo-update-git-colors ()
-  "Update git icon colors when Modus theme changes."
-  (mini-echo-mode -1)
-  (mini-echo-mode 1))
-
-(add-hook 'modus-themes-after-load-theme-hook #'mini-echo-update-git-colors)
-
-(mini-echo-mode)
