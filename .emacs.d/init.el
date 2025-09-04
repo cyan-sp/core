@@ -132,7 +132,7 @@
 
 (setq modus-themes-italic-constructs t)
 
-(modus-themes-load-theme 'modus-vivendi)
+(modus-themes-load-theme 'modus-operandi)
 
 (use-package meow
   :custom
@@ -516,15 +516,31 @@ Version 2016-11-22"
 
 (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
 
-
 (use-package magit  :custom  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ;fulllscreent
   ) 
-
-(use-package forge :after magit)
 
 (use-package magit-todos  :after magit :config (magit-todos-mode 1))
 
 (use-package hl-todo)
+
+(use-package diff-hl
+            :init
+            (add-hook 'prog-mode-hook #'diff-hl-mode)
+            (add-hook 'org-mode-hook #'diff-hl-mode)
+            (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
+            (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+            :config
+            (setq diff-hl-fringe-bmp-function 'diff-hl-fringe-bmp-from-type)
+            (setq diff-hl-margin-side 'left)
+            (diff-hl-mode t))
+
+(global-diff-hl-mode)
+
+(diff-hl-margin-mode)
+
+(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+
+(diff-hl-flydiff-mode)
 
 (setq hl-todo-keyword-faces
       '(("TODO"   . error)
@@ -547,7 +563,6 @@ Version 2016-11-22"
       "Remove mode-line and header-line."
       (setq mode-line-format nil)
       (setq header-line-format nil))))
-
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
@@ -596,26 +611,23 @@ Version 2016-11-22"
 
 (setq org-babel-python-command "python3")
 
-
 (defun efs/org-mode-setup ()
-  (org-indent-mode 1)		       ;indent source code blocks
-  ;; (visual-line-mode 1)
-  ;; (org-toggle-pretty-entities) 		; TODO : what is this 
   (org-modern-mode 1)
-  ;; (buffer-face-set :height 150)
-  ;; (set-face-attribute 'default nil :height 150)
-  )
+  (buffer-face-set :height 160))
 
 (use-package consult)			;consult line
 
 (setq x-underline-at-descent-line t)
 
 (use-package org-modern
- :init
- (setq org-modern-list nil)		; lists like +, -
- ;; (setq org-modern-star nil)
- (setq org-modern-checkbox nil)
- :ensure t)
+  :init
+  (setq org-modern-list nil)		; lists like +, -
+  (setq org-modern-checkbox nil)
+  (setq org-modern-hide-stars nil)
+  (setq org-modern-table nil)
+  (setq org-modern-star nil)
+  (setq org-modern-timestamp nil)
+  :ensure t)
 
 (defun now ()
   "Insert string for the current time formatted like '2:34 PM'."
@@ -769,50 +781,46 @@ DIRECTION should be 'forward or 'backward."
 ;; (custom-set-faces
 ;;  '(region ((t :extend nil))))
 
-(use-package elfeed)
-
-
 (use-package elfeed
-    :bind (:map elfeed-search-mode-map
-                ("U" . elfeed-update))
-    :config
-    ;; (setq elfeed-db "~/.emacs.d/.elfeed/")
-    (setq elfeed-feeds
+  :bind ((:map elfeed-search-mode-map
+               ("U" . elfeed-update))
+         (:map elfeed-show-mode-map
+               ("o" . elfeed-show-visit)))
+  :config
+  ;; (setq elfeed-db "~/.emacs.d/.elfeed/")
+  (setq elfeed-feeds
         '("https://protesilaos.com/news.xml"
-            "https://protesilaos.com/codelog.xml"
-            "https://protesilaos.com/advice.xml"
-            "https://protesilaos.com/interpretations.xml"
-            ;; "https://nullprogram.com/feed/"
-            "https://www.reddit.com/r/emacs/.rss"
-            "https://simblob.blogspot.com/feeds/posts/default" ;; Red blob games 
-            "https://planet.emacslife.com/atom.xml"
-            ;; "https://www.reddit.com/r/orgmode.rss"
-            "https://www.reddit.com/r/Anki.rss"
-            ;; "https://ag91.github.io/rss.xml" ;; Where parallels cross
-            "https://www.rousette.org.uk/index.xml" ;; But she is a girl
-            "https://karthinks.com/index.xml"
-            "https://emacstil.com/feed.xml"
-            "https://www.reddit.com/r/lisp.rss"
-            "https://olddeuteronomy.github.io/index.xml"
-            "https://www.reddit.com/r/AnkiComputerScience.rss"
-            "https://whhone.com/index.xml"      ;; https://whhone.com/posts/para-org-mode/
-            ;; "https://emacs.stackexchange.com/feeds"
-            ;; "https://clojure.stackexchange.com/feeds"
-            "https://www.reddit.com/r/Clojure.rss"
-            "https://www.reddit.com/r/Clojurescript.rss"
-            "https://www.reddit.com/r/lisp.rss"
-            "http://gigasquidsoftware.com/atom.xml"
-            "https://studio.tymoon.eu/api/studio/gallery/atom?tag&user=shinmera"
-            ;; "https://tumblr.shinmera.com/rss"
-            ;; "https://www.reddit.com/r/OCD.rss"
-            "https://www.reddit.com/r/menitrust.rss"
-            ;; "https://www.reddit.com/r/radiohead.rss"
-            "https://www.reddit.com/r/thexx.rss"
-	    ;; "https://nitter.net/GrimmiVT/rss"
-	    "https://bsky.app/profile/happypaintings.bsky.social.rss"
-	    "https://bsky.app/profile/olddeuteronomy.bsky.social.rss"
-	    "https://xcancel.com/GrimmiVT/rss"
-)))
+          "https://protesilaos.com/codelog.xml"
+          "https://protesilaos.com/advice.xml"
+          "https://protesilaos.com/interpretations.xml"
+          "https://nullprogram.com/feed/"
+          "https://www.reddit.com/r/emacs/.rss"
+          "https://simblob.blogspot.com/feeds/posts/default" ;; Red blob games 
+          "https://planet.emacslife.com/atom.xml"
+          ;; "https://www.reddit.com/r/orgmode.rss"
+          "https://www.reddit.com/r/Anki.rss"
+          ;; "https://ag91.github.io/rss.xml" ;; Where parallels cross
+          "https://www.rousette.org.uk/index.xml" ;; But she is a girl
+          "https://karthinks.com/index.xml"
+          "https://emacstil.com/feed.xml"
+          "https://www.reddit.com/r/lisp.rss"
+          "https://olddeuteronomy.github.io/index.xml"
+          "https://www.reddit.com/r/AnkiComputerScience.rss"
+          "https://whhone.com/index.xml"      ;; https://whhone.com/posts/para-org-mode/
+          ;; "https://emacs.stackexchange.com/feeds"
+          ;; "https://clojure.stackexchange.com/feeds"
+          "https://www.reddit.com/r/Clojure.rss"
+          "https://www.reddit.com/r/Clojurescript.rss"
+          "https://www.reddit.com/r/lisp.rss"
+          "http://gigasquidsoftware.com/atom.xml"
+          "https://studio.tymoon.eu/api/studio/gallery/atom?tag&user=shinmera"
+          ;; "https://tumblr.shinmera.com/rss"
+	  "https://www.reddit.com/r/menitrust.rss"
+	  "https://xkcd.com/atom.xml"
+          "https://shaarli.lain.li/feed/atom?"
+	  "https://endlessparentheses.com/atom.xml"
+	  "https://www.cyan.sh/blog/feed.xml"
+	  )))
 
 ;; Disable startup screen
 ;; Disable startup screen and set initial buffer
@@ -888,25 +896,9 @@ DIRECTION should be 'forward or 'backward."
   (unhighlight-regexp t)
   (message "Vterm highlights cleared"))
 
-;; ;; Update faces when theme changes
-;; (defun vterm-update-modus-faces ()
-;;   "Update vterm highlight faces when Modus theme changes."
-;;   (when (boundp 'vterm-modus-error-face)
-;;     (vterm-clear-highlights)
-;;     (vterm-highlight-logs-modus)))
-
-;; (add-hook 'modus-themes-after-load-theme-hook #'vterm-update-modus-faces)
-
-;; (with-eval-after-load 'vterm
-;;   (define-key vterm-mode-map (kbd "C-c h") #'vterm-highlight-logs-modus)
-;;   (define-key vterm-mode-map (kbd "C-c u") #'vterm-clear-highlights))
-
 (modus-themes-get-color-value 'red-intense)
 
-;; (modus-themes-load-theme 'modus-operandi)
-
 (use-package svg-lib)
-
 (use-package mini-echo
   :config
   (setq mini-echo-right-padding 5))
