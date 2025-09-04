@@ -328,6 +328,13 @@ Version 2016-11-22"
     (save-restriction
       (indent-region (point-min) (point-max)))))
 
+(setq-default show-trailing-whitespace nil)
+(setq whitespace-display-mappings '((space-mark 32 [?·])))
+;; (setq whitespace-style '(space-mark))
+;; (setq whitespace-display-mappings '((space-mark 32 [183] [46])))
+;; (setq whitespace-space 'cfw:face-disable) ; <- insert the face
+(setq whitespace-style '(face spaces space-mark))
+
 (use-package groovy-mode :ensure t)
 
 (use-package uv :straight (uv :type git :host github :repo "johannes-mueller/uv.el"))
