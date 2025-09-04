@@ -143,6 +143,91 @@
 
 (modus-themes-load-theme 'modus-operandi)
 
+(use-package svg-lib)
+(use-package mini-echo
+  :config
+  (setq mini-echo-right-padding 5))
+
+;; Git icon segment using SVG with Modus themes colors
+(mini-echo-define-segment "git-icon"
+  "Git branch icon segment with Modus themes colors."
+  :fetch 
+  (when (bound-and-true-p vc-mode)
+    (let ((icon-color (modus-themes-get-color-value 'magenta-intense))
+          (branch-color (modus-themes-get-color-value 'blue-cooler)))
+      (concat
+       (propertize "git" 'display 
+                   (svg-lib-icon "source-branch"
+                                 `(:collection "material"
+                                   :padding 0 :stroke 0 :margin 0 :radius 0
+                                   :foreground ,icon-color)))
+       " "
+       (propertize (substring vc-mode 5) 'face `(:foreground ,branch-color))))))
+
+;; Org clock segment using SVG with Modus themes colors
+(mini-echo-define-segment "org-clock"
+  "Org clock segment showing current clocked task with timer."
+  :fetch
+  (when (and (bound-and-true-p org-clock-current-task)
+             (bound-and-true-p org-clock-start-time))
+    (let ((icon-color (modus-themes-get-color-value 'yellow-intense))
+          (task-color (modus-themes-get-color-value 'fg-main))
+          (time-color (modus-themes-get-color-value 'cyan-cooler))
+          (elapsed-time (org-clock-get-clocked-time)))
+      (concat
+       (propertize "clock" 'display 
+                   (svg-lib-icon "creation"
+                                 `(:collection "material"
+                                   :padding 0 :stroke 0 :margin 0 :radius 0
+                                   :foreground ,icon-color)))
+       " "
+       (propertize (truncate-string-to-width org-clock-current-task 30 nil nil "…")
+                   'face `(:foreground ,icon-color))
+       " "
+       (propertize (format "[%d:%02d]" 
+                          (/ elapsed-time 60) 
+                          (% elapsed-time 60))
+                   'face `(:foreground ,icon-color))))))
+
+;; Alternative org clock segment with clock-out time estimate
+(mini-echo-define-segment "org-clock-estimate"
+  "Org clock segment with effort estimate comparison."
+  :fetch
+  (when (and (bound-and-true-p org-clock-current-task)
+             (bound-and-true-p org-clock-start-time))
+    (let ((icon-color (modus-themes-get-color-value 'green-intense))
+          (task-color (modus-themes-get-color-value 'fg-main))
+          (time-color (modus-themes-get-color-value 'cyan-cooler))
+          (elapsed-time (org-clock-get-clocked-time))
+          (effort (org-clock-get-effort)))
+      (concat
+       (propertize "clock" 'display 
+                   (svg-lib-icon "timer"
+                                 `(:collection "material"
+                                   :padding 0 :stroke 0 :margin 0 :radius 0
+                                   :foreground ,icon-color)))
+       " "
+       (propertize (truncate-string-to-width org-clock-current-task 25 nil nil "…")
+                   'face `(:foreground ,task-color))
+       " "
+       (propertize (format "[%d:%02d%s]" 
+                          (/ elapsed-time 60) 
+                          (% elapsed-time 60)
+                          (if effort 
+                              (format "/%s" effort)
+                            ""))
+                   'face `(:foreground ,time-color))))))
+
+;; Add to mini-echo persistent rules (choose one org-clock segment)
+(setq mini-echo-persistent-rule
+      '(:long ("git-icon" "org-clock" "major-mode" "shrink-path" "buffer-position" "flymake")
+        ;; Alternative with estimate:
+        ;; :long ("git-icon" "org-clock-estimate" "major-mode" "shrink-path" "buffer-position" "flymake")
+        ;; :short ("git-icon" "org-clock" "buffer-name" "buffer-position" "flymake")
+        ))
+
+(mini-echo-mode)
+
 (use-package meow
   :custom
   (meow-use-clipboard t)
