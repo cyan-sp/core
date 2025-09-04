@@ -841,6 +841,24 @@ DIRECTION should be 'forward or 'backward."
 	  "https://www.cyan.sh/blog/feed.xml"
 	  )))
 
+(use-package nov)
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+
+(use-package org-remark
+  :bind (;; :bind keyword also implicitly defers org-remark itself.
+         ;; Keybindings before :map is set for global-map. Adjust the keybinds
+         ;; as you see fit.
+         ("C-c n m" . org-remark-mark)
+         ("C-c n l" . org-remark-mark-line)
+         :map org-remark-mode-map
+         ("C-c n o" . org-remark-open)
+         ("C-c n ]" . org-remark-view-next)
+         ("C-c n [" . org-remark-view-prev)
+         ("C-c n r" . org-remark-remove)
+         ("C-c n d" . org-remark-delete)))
+
+(with-eval-after-load 'nov  (org-remark-nov-mode +1))
+
 ;; Disable startup screen
 ;; Disable startup screen and set initial buffer
 (setq inhibit-startup-screen t
