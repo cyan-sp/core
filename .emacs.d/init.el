@@ -197,6 +197,9 @@ Version 2016-11-22"
 (define-key meow-normal-state-keymap (kbd "C-.")#'mc/mark-next-like-this)
 (global-set-key (kbd "M-o") 'meow-to-block)
 
+(global-set-key (kbd "M-i") (lambda () (interactive) (forward-whitespace -1)))
+(global-set-key (kbd "M-u") 'backward-up-list)
+
 (defun meow-setup ()
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-colemak)
   (meow-motion-overwrite-define-key
@@ -314,6 +317,14 @@ Version 2016-11-22"
 (use-package uv :straight (uv :type git :host github :repo "johannes-mueller/uv.el"))
 
 (use-package markdown-mode)
+
+(use-package py-isort)
+
+;; Python environment
+(use-package pyvenv
+  :straight t
+  :config
+  (pyvenv-mode 1))
 
 (use-package centaur-tabs
   :demand
@@ -437,6 +448,22 @@ Version 2016-11-22"
   (if (eq (eyebrowse--get 'current-slot) n)
       (eyebrowse-last-window-config)
     (funcall (intern (format "eyebrowse-switch-to-window-config-%s" n)))))
+
+(use-package popper
+  :ensure t ; or :straight t
+  :bind (("C-`"   . popper-toggle)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        ;; '("\\*Messages\\*"
+        ;;   "Output\\*$"
+        ;;   "\\*Async Shell Command\\*"
+        ;;   help-mode
+        ;;   compilation-mode)
+	'("*slime-repl uv-python*" "*claude:~/ord/b-esim/:default*"))
+  (popper-mode +1)
+  (popper-echo-mode +1))                ; For echo area hints
 
 (use-package sqlite3
   :ensure t)
