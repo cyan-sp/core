@@ -434,6 +434,26 @@ Version 2016-11-22"
   :config
   (pyvenv-mode 1))
 
+;; Install SLIME via straight
+(straight-use-package 'slime)
+
+;; Install slime-star via straight (from GitHub)
+(straight-use-package 
+ '(slime-star :type git :host github :repo "mmontone/slime-star"))
+
+(add-to-list 'load-path "~/.core/.emacs.d/swanky-python/slimy-python")
+(push 'slime-py slime-contribs)
+
+(slime-setup slime-contribs)
+
+(bind-key* "C-x C-e" 
+  (lambda ()
+    (interactive)
+    (if (and (eq major-mode 'python-mode) 
+             (fboundp 'slime-py-eval-statement-at-point))
+        (slime-py-eval-statement-at-point)
+      (eval-last-sexp nil))))
+
 (use-package centaur-tabs
   :demand
   :config
