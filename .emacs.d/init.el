@@ -189,10 +189,13 @@ Version 2016-11-22"
             (progn (re-search-forward "\\\"" nil t)))))
 
 
+(use-package multiple-cursors)
+
 (define-key meow-normal-state-keymap (kbd "M-n") #'forward-whitespace)
 (define-key meow-insert-state-keymap (kbd "M-n") #'forward-whitespace)
+(define-key meow-insert-state-keymap (kbd "C-.")#'mc/mark-next-like-this)
+(define-key meow-normal-state-keymap (kbd "C-.")#'mc/mark-next-like-this)
 (global-set-key (kbd "M-o") 'meow-to-block)
-
 
 (defun meow-setup ()
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-colemak)
@@ -306,8 +309,11 @@ Version 2016-11-22"
  '("f" . project-find-file)
  '("s" . consult-grep))
 
-(use-package groovy-mode
-  :ensure t)
+(use-package groovy-mode :ensure t)
+
+(use-package uv :straight (uv :type git :host github :repo "johannes-mueller/uv.el"))
+
+(use-package markdown-mode)
 
 (use-package centaur-tabs
   :demand
