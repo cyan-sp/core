@@ -321,6 +321,13 @@ Version 2016-11-22"
  '("f" . project-find-file)
  '("s" . consult-grep))
 
+(defun indent-whole-buffer ()
+  "Indent the entire buffer without affecting point or mark."
+  (interactive)
+  (save-excursion
+    (save-restriction
+      (indent-region (point-min) (point-max)))))
+
 (use-package groovy-mode :ensure t)
 
 (use-package uv :straight (uv :type git :host github :repo "johannes-mueller/uv.el"))
