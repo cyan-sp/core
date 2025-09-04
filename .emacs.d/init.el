@@ -9,7 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "pragmata pro" :weight 'normal    :height 165)
+(set-face-attribute 'default nil :family "ubuntu mono" :weight 'normal    :height 165)
+(set-face-attribute 'variable-pitch nil :family "ubuntu sans" :weight 'normal    :height 165)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
@@ -65,6 +66,8 @@
 
 (global-set-key [remap dabbrev-expand] 'hippie-expand)
 
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
 ;; (global-set-key [remap yank-pop] 'consult-yank-from-kill-ring)
 ;; (global-set-key [remap project-switch-project] 'projectile-persp-switch-project)
 ;; (global-set-key [remap set-mark-command] 'my-contract-region) ;https://emacs.stackexchange.com/questions/40613/override-c-spc-set-mark-command
@@ -118,8 +121,6 @@
 ;; As above, but with a purple style
 (setq modus-themes-common-palette-overrides
       '((comment yellow-faint)
-
-	(bg-paren-match magenta-intense)
 	(bg-prose-block-delimiter  unspecified)  ; source code block (top face)
 	(bg-prose-block-contents   unspecified) ; sourec code block (background face)
 	(fg-line-number-inactive unspecified)
@@ -311,11 +312,8 @@ Version 2016-11-22"
 (use-package centaur-tabs
   :demand
   :config
-  ;; (setq centaur-tabs-style "slant")
-  (setq centaur-tabs-set-modified-marker t)
   (setq centaur-tabs-set-bar 'over)
   (centaur-tabs-mode t)
-  ;; (centaur-tabs-headline-match)
   :bind
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward))
@@ -331,8 +329,7 @@ Version 2016-11-22"
               ;; Cancel any existing timer
               (when my-posframe-timer
                 (cancel-timer my-posframe-timer))
-              
-              ;; Use run-with-idle-timer to ensure the switch is complete
+	      ;; Use run-with-idle-timer to ensure the switch is complete
               (run-with-idle-timer 0.1 nil
                 (lambda ()
                   (let* ((slot (number-to-string (eyebrowse--get 'current-slot nil)))
@@ -461,9 +458,6 @@ Version 2016-11-22"
   ;; If using org-roam-protocol
   (require 'org-roam-protocol))
 
-
-
-
 ;; Add this to your config temporarily, evaluate it, then remove it
 ;; (delete-file "~/.emacs.d/org-roam.db")
 
@@ -484,7 +478,6 @@ Version 2016-11-22"
 	reposition-window
 	bookmark-jump
 	other-window
-	forward-whitespace
 	delete-window
 	;; delete-other-windows
 	forward-page
@@ -766,11 +759,9 @@ DIRECTION should be 'forward or 'backward."
 
 (use-package rainbow-delimiters)
  
-(use-package git-gutter)
-
 (add-hook 'prog-mode-hook (lambda () (rainbow-delimiters-mode +1)
 			    (hl-todo-mode +1)
-			    (git-gutter-mode +1)))
+			    ))
 
 (set-register ?i (cons 'file "~/.core/.emacs.d/init.el"))
 
