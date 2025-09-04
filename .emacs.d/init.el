@@ -685,7 +685,21 @@ Version 2016-11-22"
 ;; (global-smudge-remote-mode)
 
 (use-package vterm)
+(with-eval-after-load "esh-opt"
+  (autoload 'epe-theme-lambda "eshell-prompt-extras")
+  (setq eshell-highlight-prompt nil
+        eshell-prompt-function 'epe-theme-lambda))
 
+(use-package esh-autosuggest
+  :hook (eshell-mode . esh-autosuggest-mode)
+  ;; If you have use-package-hook-name-suffix set to nil, uncomment and use the
+  ;; line below instead:
+  ;; :hook (eshell-mode-hook . esh-autosuggest-mode)
+  :ensure t)
+
+(use-package eshell-prompt-extras)
+(use-package exec-path-from-shell) ;for swank to work
+(exec-path-from-shell-initialize)	;for swank to work
 
 (use-package meow-vterm :straight (:type git :host github :repo "accelbread/meow-vterm"))
 (meow-vterm-enable)
@@ -729,7 +743,6 @@ DIRECTION should be 'forward or 'backward."
     (isearch-yank-string selected-text)))
 
 ;; Deadgrep with selection support
-
 
 (use-package deadgrep)
 
