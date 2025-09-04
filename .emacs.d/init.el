@@ -72,6 +72,15 @@
 ;; (global-set-key [remap project-switch-project] 'projectile-persp-switch-project)
 ;; (global-set-key [remap set-mark-command] 'my-contract-region) ;https://emacs.stackexchange.com/questions/40613/override-c-spc-set-mark-command
 
+(setq time-stamp-active t          ; Do enable time-stamps.
+      time-stamp-line-limit 10     ; Check first 10 buffer lines for Time-stamp: <>
+      time-stamp-format "Last changed %Y-%02m-%02d %02H:%02M:%02S by %u")
+;; (add-hook 'write-file-hooks 'time-stamp)
+
+(add-hook 'before-save-hook 'time-stamp)
+
+(setq use-dialog-box nil)		; dont use gui boxes
+
 (straight-use-package '(monet :type git :host github :repo "stevemolitor/monet"))
 
 (use-package vterm :ensure t)
