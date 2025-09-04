@@ -517,14 +517,12 @@ Version 2016-11-22"
 (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
 
 
-(use-package magit
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ;fulllscreent
+(use-package magit  :custom  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ;fulllscreent
   ) 
 
-(use-package magit-todos
-  :after magit
-  :config (magit-todos-mode 1))
+(use-package forge :after magit)
+
+(use-package magit-todos  :after magit :config (magit-todos-mode 1))
 
 (use-package hl-todo)
 
@@ -743,15 +741,12 @@ DIRECTION should be 'forward or 'backward."
 	 (define-key m (kbd "C-r") (lambda () (interactive) (isearch-with-selection 'backward)))
 	 (define-key m (kbd "C-s") (lambda () (interactive) (isearch-with-selection 'forward)))
          ;; Search bindings
-         (define-key m (kbd "M-s o") #'deadgrep-with-selection)            ; Alt+s o for deadgrep
-         (define-key m (kbd "M-s g") #'consult-grep-with-selection)        ; Alt+s g for consult-grep  
-         ;; Your existing bindings
-         (define-key m (kbd "M-t") 'my-google-translate-at-point)
+         (define-key m (kbd "C-c o") #'deadgrep-with-selection)            ; Alt+s o for deadgrep
+         (define-key m (kbd "C-c s") #'consult-grep-with-selection)        ; Alt+s g for consult-grep  
 	 (define-key m (kbd "\"") (lambda () (interactive) (surround-quotes)))
          m))))
 
 (add-to-list 'emulation-mode-map-alists 'may-emulation-alist)
-
 
 (global-set-key (kbd "M-s o") 'deadgrep) ; unbinds occur
 
