@@ -858,6 +858,11 @@ The completion candidates include the Git status of each file."
 
 (winner-mode)
 
+(define-abbrev-table 'global-abbrev-table
+  '(("rtr" "please read the repo" nil :count 0)))
+
+(setq-default abbrev-mode t)
+
 ;; (use-package yasnippet
 ;;   :bind (:map yas-minor-mode-map
 ;;               ("TAB" . nil)
