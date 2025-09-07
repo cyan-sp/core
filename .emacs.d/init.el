@@ -391,14 +391,86 @@ Version 2016-11-22"
         (slime-py-eval-statement-at-point)
       (eval-last-sexp nil))))
 
-(use-package centaur-tabs
-  :demand
+;; Enhanced tab-bar-mode configuration
+(use-package tab-bar
+  :ensure nil  ; Built-in package
+  :init
+  ;; Enable tab-bar-mode
+  (tab-bar-mode 1)
+  
   :config
-  (setq centaur-tabs-set-bar 'over)
-  (centaur-tabs-mode t)
+  ;; Basic appearance settings
+  (setq tab-bar-close-button-show nil          ; Hide close button
+        tab-bar-new-button-show nil            ; Hide new tab button  
+        ;; tab-bar-tab-hints t                    ; Show tab numbers
+        tab-bar-show 1                         ; Always show tab bar
+        ;; tab-bar-select-tab-modifiers '(meta)   ; Use M-1, M-2, etc for tab selection
+        tab-bar-tab-name-truncated-max 20      ; Limit tab name length
+        ;; tab-bar-auto-width nil                 ; Don't auto-adjust width
+        ;; tab-bar-format '(tab-bar-format-tabs tab-bar-separator)
+	) ; Clean format
+  
+  ;; Improved tab naming function
+  (setq tab-bar-tab-name-function 'my/tab-bar-tab-name-with-project)
+  
   :bind
-  ("C-<prior>" . centaur-tabs-backward)
-  ("C-<next>" . centaur-tabs-forward))
+  ;; Keep your existing keybindings
+  ("C-<prior>" . tab-bar-switch-to-prev-tab)
+  ("C-<next>" . tab-bar-switch-to-next-tab)
+  ;; Additional useful bindings
+  ("C-x t n" . tab-bar-new-tab)
+  ("C-x t k" . tab-bar-close-tab)
+  ("C-x t r" . tab-bar-rename-tab))
+
+;; Custom tab naming function that shows project context
+(defun my/tab-bar-tab-name-with-project ()
+  "Return tab name showing project context when available."
+  (let* ((project-name (when (and (fboundp 'project-current) (project-current))
+                         (file-name-nondirectory 
+                          (directory-file-name 
+                           (project-root (project-current))))))
+         (buffer-name (buffer-name))
+         (major-mode-name (symbol-name major-mode)))
+    (cond
+     ;; In a project - show project:buffer
+     (project-name
+      (format "%s:%s" project-name 
+              (if (string-match "\\*.*\\*" buffer-name)
+                  buffer-name  ; Keep special buffer names as-is
+                (file-name-nondirectory buffer-name))))
+     ;; Special buffers
+     ((string-match "\\*.*\\*" buffer-name)
+      buffer-name)
+     ;; Regular files
+     (t (file-name-nondirectory buffer-name)))))
+
+;; Simple eyebrowse-tab integration - each workspace gets independent tabs
+(defvar my/eyebrowse-tab-configs (make-hash-table)
+  "Hash table storing tab configurations for each eyebrowse workspace.")
+
+(defun my/eyebrowse-save-current-tabs ()
+  "Save the current tab configuration."
+  (when (and (bound-and-true-p eyebrowse-mode) (bound-and-true-p tab-bar-mode))
+    (let ((current-slot (eyebrowse--get 'current-slot)))
+      (puthash current-slot (copy-sequence (frame-parameter nil 'tabs)) my/eyebrowse-tab-configs))))
+
+(defun my/eyebrowse-restore-tabs ()
+  "Restore tabs for current workspace or create default tab."
+  (when (and (bound-and-true-p eyebrowse-mode) (bound-and-true-p tab-bar-mode))
+    (let* ((current-slot (eyebrowse--get 'current-slot))
+           (saved-tabs (gethash current-slot my/eyebrowse-tab-configs)))
+      (if saved-tabs
+          ;; Restore saved tabs
+          (set-frame-parameter nil 'tabs saved-tabs)
+        ;; No saved tabs - create a single default tab
+        (set-frame-parameter nil 'tabs 
+                            `((current-tab (name . "1") (explicit-name)))))
+      ;; Force tab bar update
+      (force-mode-line-update t))))
+
+;; Hook functions
+(add-hook 'eyebrowse-pre-window-switch-hook #'my/eyebrowse-save-current-tabs)
+(add-hook 'eyebrowse-post-window-switch-hook #'my/eyebrowse-restore-tabs)
 
 (use-package posframe
   :ensure t)
