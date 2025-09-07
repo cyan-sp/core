@@ -447,9 +447,6 @@ Version 2016-11-22"
                                           (lambda ()
                                             (posframe-hide "*my-posframe-buffer*")
                                             (setq my-posframe-timer nil))))))))))
-
-
-
 (use-package eyebrowse
   :bind
   ("M-0" . (lambda () (interactive) (eyebrowse-last-window-config))
@@ -744,7 +741,8 @@ The completion candidates include the Git status of each file."
 
 (defun efs/org-mode-setup ()
   (org-modern-mode 1)
-  (buffer-face-set :height 160))
+  ;; (buffer-face-set :height 165)
+  )
 
 (use-package consult)			;consult line
 
@@ -985,6 +983,25 @@ DIRECTION should be 'forward or 'backward."
          ("C-c n [" . org-remark-view-prev)
          ("C-c n r" . org-remark-remove)
          ("C-c n d" . org-remark-delete)))
+
+(use-package org-transclusion)
+
+(defun my/transclude-region-or-file (language)
+  "Create a transclusion link for current file.
+If region is active, transclude only selected lines."
+  (interactive "sLanguage: ")
+  (let* ((current-file (buffer-file-name))
+         (transclude-line (format "#+transclude: [[file:%s]] :src %s" 
+                                  current-file language)))
+    
+    (when (use-region-p)
+      (let ((start-line (line-number-at-pos (region-beginning)))
+            (end-line (line-number-at-pos (region-end))))
+        (setq transclude-line (concat transclude-line 
+                                      (format " :lines %d-%d" start-line end-line)))))
+    
+    (kill-new transclude-line)
+    (message "Transclusion link copied to clipboard: %s" transclude-line)))
 
 (with-eval-after-load 'nov  (org-remark-nov-mode +1))
 
