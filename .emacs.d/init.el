@@ -367,6 +367,10 @@ Version 2016-11-22"
   :config
   (pyvenv-mode 1))
 
+(add-to-list 'load-path "~/.core/.emacs.d/elisp/")
+
+(require 'ahk-mode)
+
 ;; Install SLIME via straight
 (straight-use-package 'slime)
 
