@@ -307,8 +307,8 @@ Version 2016-11-22"
    '("'" . meow-reverse)
    '("<escape>" . ignore)
    '("/" . consult-line)
-   '("E" . centaur-tabs-forward-tab)
-   '("N" . centaur-tabs-backward-tab)
+   '("E" . tab-bar-switch-to-next-tab)
+   '("N" . tab-bar-switch-to-prev-tab)
    ))
 
 
