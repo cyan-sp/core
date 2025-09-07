@@ -155,6 +155,10 @@
 
 (ef-themes-load-theme 'ef-rosa)
 
+(use-package minions)
+
+(minions-mode)
+
 (use-package svg-lib)
 
 (use-package meow
@@ -606,7 +610,18 @@ Version 2016-11-22"
 (use-package magit  :custom  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ;fulllscreent
   ) 
 
-(use-package magit-todos  :after magit :config (magit-todos-mode 1))
+(use-package magit-delta
+  :hook (magit-mode . magit-delta-mode))
+
+(add-hook 'magit-mode-hook (lambda () (magit-delta-mode +1)))
+
+(use-package lab)
+
+(setq lab-host "https://gitlab.ordenaris.com/")
+
+(setq lab-token "glpat-SwfBnMxrysFYGDMbTpiU")
+
+;; (use-package magit-todos  :after magit :config (magit-todos-mode 1))
 
 (use-package hl-todo)
 
