@@ -54,10 +54,6 @@
 ;; Set up the visible bell
 (setq visible-bell t)
 
-;; (setq visible-cursor nil)
-
-;; (setq cursor-type 'box)
-
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 ;; (unbind-key "C-r")
@@ -141,7 +137,9 @@
 
 (setq modus-themes-italic-constructs t)
 
-(modus-themes-load-theme 'modus-operandi)
+(setq modus-themes-bold-constructs t)
+
+(modus-themes-load-theme 'modus-vivendi)
 
 (use-package svg-lib)
 (use-package mini-echo
@@ -336,7 +334,7 @@ Version 2016-11-22"
    '("b" . meow-back-word)
    '("B" . meow-back-symbol)
    '("c" . me-meow-change)
-   '("d" . nt-duplicate) ;; '("d" . meow-delete)
+   ;; '("d" . nil) ;; '("d" . meow-delete)
    '("e" . meow-prev)
    '("E" . meow-prev-expand)
    '("f" . jump-char-forward) ;;meow-find
@@ -1014,7 +1012,9 @@ DIRECTION should be 'forward or 'backward."
   :bind ((:map elfeed-search-mode-map
                ("U" . elfeed-update))
          (:map elfeed-show-mode-map
-               ("o" . elfeed-show-visit)))
+               ("o" . elfeed-show-visit))
+	 (:map elfeed-show-mode-map
+               ("q" . elfeed-search-quit-window)))
   :config
   ;; (setq elfeed-db "~/.emacs.d/.elfeed/")
   (setq elfeed-feeds
