@@ -147,8 +147,8 @@
   "Tweak the style of the mode lines."
   (ef-themes-with-colors
    (custom-set-faces
-    `(mode-line ((,c :background ,bg-active :foreground ,fg-main :box (:line-width 1 :color ,fg-dim))))
-    ;; `(mode-line ((,c :background ,bg-mode-line :foreground ,fg-mode-line :box (:line-width 1 :color ,fg-dim))))
+    ;; `(mode-line ((,c :background ,bg-active :foreground ,fg-main :box (:line-width 1 :color ,fg-dim))))
+    `(mode-line ((,c :background ,bg-mode-line :foreground ,fg-mode-line :box (:line-width 1 :color ,fg-dim))))
     `(mode-line-inactive ((,c :box (:line-width 1 :color ,bg-active)))))))
 
 (add-hook 'ef-themes-post-load-hook #'my-ef-themes-mode-line)
@@ -405,8 +405,8 @@ Version 2016-11-22"
         ;; tab-bar-tab-hints t                    ; Show tab numbers
         tab-bar-show 1                         ; Always show tab bar
         ;; tab-bar-select-tab-modifiers '(meta)   ; Use M-1, M-2, etc for tab selection
-        tab-bar-tab-name-truncated-max 20      ; Limit tab name length
-        ;; tab-bar-auto-width nil                 ; Don't auto-adjust width
+        tab-bar-tab-name-truncated-max 50      ; Increase tab name length limit
+        tab-bar-auto-width nil                 ; Don't auto-adjust width
         ;; tab-bar-format '(tab-bar-format-tabs tab-bar-separator)
 	) ; Clean format
   
@@ -558,7 +558,7 @@ Version 2016-11-22"
   (after-init . eyebrowse-mode)
   :custom
   ;; (eyebrowse-tagged-slot-format "%t")
-  (eyebrowse-mode-line-style 'current)
+  ;; (eyebrowse-mode-line-style 'current)
   ;; (eyebrowse-mode-line-left-delimiter "")
   ;; (eyebrowse-mode-line-right-delimiter "")
   (eyebrowse-new-workspace t))
@@ -824,6 +824,11 @@ The completion candidates include the Git status of each file."
   :custom
   (org-return-follows-link t)
   (org-confirm-babel-evaluate nil))
+
+;; (setq org-startup-folded 'showeverything)  ; This allows :VISIBILITY: properties to take precedence
+
+(setq org-startup-folded t)
+;; (setq org-use-property-inheritance '("VISIBILITY"))
 
 (with-eval-after-load 'org
 (org-babel-do-load-languages
