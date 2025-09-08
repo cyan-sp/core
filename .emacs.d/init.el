@@ -821,18 +821,9 @@ The completion candidates include the Git status of each file."
   :defer t
   :hook
   (org-mode . efs/org-mode-setup)
-  ;; (org-mode . efs/org-level-face-setup-simple)
-  ;; (org-mode . org-appear-mode)
   :custom
   (org-return-follows-link t)
-  (org-confirm-babel-evaluate nil)
-  ;; (org-hide-leading-stars t)
-  ;; (org-hide-emphasis-markers t)
-  ;; (org-confirm-babel-evaluate nil)
-  ;; (org-directory "~/.note/RoamNotes/OrgFiles/")
-  ;; :custom
-  ;; (org-hide-block-startup t)
-  )
+  (org-confirm-babel-evaluate nil))
 
 (with-eval-after-load 'org
 (org-babel-do-load-languages
@@ -848,6 +839,28 @@ The completion candidates include the Git status of each file."
   (org-modern-mode 1)
   ;; (buffer-face-set :height 165)
   )
+
+(use-package org-mem)
+
+(setq org-mem-watch-dirs '("~/roam"))
+(setq org-mem-do-sync-with-org-id t)
+(org-mem-updater-mode)
+(org-mem-all-entries)
+
+(defun my-set-agenda-files (&rest _)
+  (setq org-agenda-files
+        (cl-loop for file in (org-mem-all-files)
+                 unless (string-search "archive" file)
+                 as entries = (org-mem-entries-in-file file)
+                 when (seq-find (##or (org-mem-entry-active-timestamps %)
+                                      (org-mem-entry-todo-state %)
+                                      (org-mem-entry-scheduled %)
+                                      (org-mem-entry-deadline %))
+                                entries)
+                 collect file)))
+
+(setq org-agenda-files nil)
+(add-hook 'org-mem-post-full-scan-functions #'my-set-agenda-files)
 
 (use-package consult)			;consult line
 
