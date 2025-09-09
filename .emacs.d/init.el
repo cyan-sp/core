@@ -353,6 +353,31 @@ Version 2016-11-22"
 
 (require 'ahk-mode)
 
+(use-package ligature
+  :config
+  ;; Enable the "www" ligature in every possible major mode
+  (ligature-set-ligatures 't '("www"))
+  ;; Enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  ;; Enable all Cascadia Code ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                                       "\\\\" "://"))
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t))
+
 ;; Install SLIME via straight
 (straight-use-package 'slime)
 
@@ -1234,4 +1259,23 @@ If region is active, transclude only selected lines."
 	     ))
 
 (require 'eaf-browser)
+
+(setq org-refile-targets '((nil :maxlevel . 3)
+                           (my-daily-note-today :tag . "archive")))
+
+(defun my-daily-note-today ()
+    (interactive)
+    "Return today's daily note file path."
+    (let ((daily-file (expand-file-name
+                       (format-time-string "%Y-%m-%d.org")
+                       (expand-file-name "daily" "~/roam"))))
+      (list daily-file)))
+ ; fallback for numbers > 10
+
+(use-package anki-editor
+  :defer t
+  :straight (:repo "anki-editor/anki-editor"))
+
+;; This assumes you've installed the package via MELPA.
+;; (use-package ef-rosa)
 
