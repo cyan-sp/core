@@ -128,32 +128,14 @@
       '((comment yellow-faint)
 	(bg-prose-block-delimiter  unspecified)  ; source code block (top face)
 	(bg-prose-block-contents   unspecified) ; sourec code block (background face)
-	(fg-line-number-inactive unspecified)
-        (fg-line-number-active fg-main)
-        (bg-line-number-inactive unspecified)
-        (bg-line-number-active unspecified)
-	(region ((t :extend nil)))
-	(fg-region unspecified)))
+	(fg-region unspecified)		; keep syntax highlight when region
+	))
 
 (setq modus-themes-italic-constructs t)
 
-(setq modus-themes-bold-constructs t)
+(setq modus-themes-bold-constructs nil)
 
-(modus-themes-load-theme 'modus-vivendi)
-
-(use-package ef-themes)
-  
-(defun my-ef-themes-mode-line ()
-  "Tweak the style of the mode lines."
-  (ef-themes-with-colors
-   (custom-set-faces
-    ;; `(mode-line ((,c :background ,bg-active :foreground ,fg-main :box (:line-width 1 :color ,fg-dim))))
-    `(mode-line ((,c :background ,bg-mode-line :foreground ,fg-mode-line :box (:line-width 1 :color ,fg-dim))))
-    `(mode-line-inactive ((,c :box (:line-width 1 :color ,bg-active)))))))
-
-(add-hook 'ef-themes-post-load-hook #'my-ef-themes-mode-line)
-
-(ef-themes-load-theme 'ef-rosa)
+(modus-themes-load-theme 'modus-operandi)
 
 (use-package minions)
 
