@@ -9,8 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "ubuntu mono" :weight 'normal    :height 165)
-(set-face-attribute 'variable-pitch nil :family "ubuntu sans" :weight 'normal    :height 165)
+(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 160)
+(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 160)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
