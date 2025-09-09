@@ -565,6 +565,39 @@ Version 2016-11-22"
       (eyebrowse-last-window-config)
     (funcall (intern (format "eyebrowse-switch-to-window-config-%s" n)))))
 
+(use-package org-ql)
+
+(defun my-number-to-japanese (n)
+  "Convert number to Japanese numerals."
+  (cond ((= n 0) "〇")
+        ((= n 1) "一")
+        ((= n 2) "二") 
+        ((= n 3) "三")
+        ((= n 4) "四")
+        ((= n 5) "五")
+        ((= n 6) "六")
+        ((= n 7) "七")
+        ((= n 8) "八")
+        ((= n 9) "九")
+        ((= n 10) "十")
+        (t (number-to-string n))))
+
+(defun agenda-todo-segment ()
+  (when (and (bound-and-true-p org-agenda-files)
+             (not (string-match-p "\\*\\(scratch\\|Messages\\|Warnings\\)\\*" (buffer-name))))
+    (ignore-errors
+      (let ((high-todos (length (org-ql-select org-agenda-files '(and (todo "TODO") (priority "A")))))
+            (mid-todos (length (org-ql-select org-agenda-files '(todo "TODO"))))
+            )
+        (concat (when (> high-todos 0) 
+                  (propertize (concat "高:" (my-number-to-japanese high-todos) " ")
+                    'face `(:foreground ,(modus-themes-get-color-value 'red-cooler))))
+                (when (> mid-todos 0)
+                  (propertize (concat "中:" (my-number-to-japanese mid-todos) " ")
+                    'face `(:foreground ,(modus-themes-get-color-value 'yellow-cooler)))))))))
+
+(add-to-list 'mode-line-misc-info '(:eval (agenda-todo-segment)))
+
 (use-package popper
   :ensure t ; or :straight t
   :bind (("C-`"   . popper-toggle)
