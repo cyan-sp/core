@@ -558,7 +558,7 @@ Version 2016-11-22"
   (after-init . eyebrowse-mode)
   :custom
   ;; (eyebrowse-tagged-slot-format "%t")
-  ;; (eyebrowse-mode-line-style 'current)
+  (eyebrowse-mode-line-style nil)
   ;; (eyebrowse-mode-line-left-delimiter "")
   ;; (eyebrowse-mode-line-right-delimiter "")
   (eyebrowse-new-workspace t))
@@ -661,6 +661,7 @@ Version 2016-11-22"
 	;; windmove-swap-states-down
 	;; tab-new
 	tab-close
+	set-mark-command
 	;; tab-next
 	org-next-visible-heading
 	org-previous-visible-heading
@@ -1037,8 +1038,7 @@ DIRECTION should be 'forward or 'backward."
 (use-package rainbow-delimiters)
  
 (add-hook 'prog-mode-hook (lambda () (rainbow-delimiters-mode +1)
-			    (hl-todo-mode +1)
-			    ))
+			    (hl-todo-mode +1)))
 
 (set-register ?i (cons 'file "~/.core/.emacs.d/init.el"))
 
@@ -1048,10 +1048,6 @@ DIRECTION should be 'forward or 'backward."
     (diredfl-global-mode 1))		; colors !
 
 (add-hook 'dired-load-hook (function (lambda () (load "dired-x")))) ; good for untar 
-
-;; Do not extend `region' background past the end of the line.
-;; (custom-set-faces
-;;  '(region ((t :extend nil))))
 
 (use-package elfeed
   :bind ((:map elfeed-search-mode-map
