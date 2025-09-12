@@ -9,8 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 160)
-(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 160)
+(set-face-attribute 'default nil :family "commit mono" :weight 'normal    :height 165)
+(set-face-attribute 'variable-pitch nil :family "commit mono" :weight 'normal    :height 165)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
@@ -825,7 +825,7 @@ The completion candidates include the Git status of each file."
 
 (use-package vundo
   :straight (:host github :repo "casouri/vundo")
-  :bind ("C-x u" . vundo)
+  ;; :bind ("C-x u" . vundo)
   :hook ((vundo-mode . my/vundo-setup))
   :init
   (progn
@@ -837,6 +837,8 @@ The completion candidates include the Git status of each file."
       "Remove mode-line and header-line."
       (setq mode-line-format nil)
       (setq header-line-format nil))))
+
+(global-set-key (kbd "C-x u") 'winner-undo)
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
@@ -921,6 +923,8 @@ The completion candidates include the Git status of each file."
   (setq org-modern-star nil)
   (setq org-modern-timestamp nil)
   :ensure t)
+
+(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 
 (defun now ()
   "Insert string for the current time formatted like '2:34 PM'."
@@ -1130,6 +1134,7 @@ DIRECTION should be 'forward or 'backward."
           "https://shaarli.lain.li/feed/atom?"
 	  "https://endlessparentheses.com/atom.xml"
 	  "https://www.cyan.sh/blog/feed.xml"
+	  "https://www.reddit.com/r/Meditation.rss"
 	  )))
 
 (use-package nov)
