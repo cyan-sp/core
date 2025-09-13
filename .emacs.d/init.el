@@ -129,13 +129,25 @@
 	(bg-prose-block-delimiter  unspecified)  ; source code block (top face)
 	(bg-prose-block-contents   unspecified) ; sourec code block (background face)
 	(fg-region unspecified)		; keep syntax highlight when region
+
+	(builtin magenta)
+        (comment yellow-faint)
+        (constant red-cooler)
+        (fnname magenta-warmer)
+        (keyword magenta-cooler)
+        (preprocessor green-warmer)
+        (docstring cyan-faint)
+        (string fg-lavender)
+        (type cyan-warmer)
+        (variable blue-warmer)
+
 	))
 
 (setq modus-themes-italic-constructs t)
 
 (setq modus-themes-bold-constructs nil)
 
-(modus-themes-load-theme 'modus-operandi)
+;; (modus-themes-load-theme 'modus-vivendi-tinted)
 
 (use-package minions)
 
@@ -353,30 +365,30 @@ Version 2016-11-22"
 
 (require 'ahk-mode)
 
-(use-package ligature
-  :config
-  ;; Enable the "www" ligature in every possible major mode
-  (ligature-set-ligatures 't '("www"))
-  ;; Enable traditional ligature support in eww-mode, if the
-  ;; `variable-pitch' face supports it
-  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-  ;; Enable all Cascadia Code ligatures in programming modes
-  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-                                       "\\\\" "://"))
-  ;; Enables ligature checks globally in all buffers. You can also do it
-  ;; per mode with `ligature-mode'.
-  (global-ligature-mode t))
+;; (use-package ligature
+;;   :config
+;;   ;; Enable the "www" ligature in every possible major mode
+;;   (ligature-set-ligatures 't '("www"))
+;;   ;; Enable traditional ligature support in eww-mode, if the
+;;   ;; `variable-pitch' face supports it
+;;   (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+;;   ;; Enable all Cascadia Code ligatures in programming modes
+;;   (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+;;                                        ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+;;                                        "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+;;                                        "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+;;                                        "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+;;                                        "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+;;                                        "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+;;                                        "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+;;                                        ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+;;                                        "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+;;                                        "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+;;                                        "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+;;                                        "\\\\" "://" "+="))
+;;   ;; Enables ligature checks globally in all buffers. You can also do it
+;;   ;; per mode with `ligature-mode'.
+;;   (global-ligature-mode t))
 
 ;; Install SLIME via straight
 (straight-use-package 'slime)
@@ -398,7 +410,7 @@ Version 2016-11-22"
         (slime-py-eval-statement-at-point)
       (eval-last-sexp nil))))
 
-;; Enhanced tab-bar-mode configuration
+;;Enhanced tab-bar-mode configuration
 (use-package tab-bar
   :ensure nil  ; Built-in package
   :init
@@ -635,7 +647,7 @@ Version 2016-11-22"
         ;;   "\\*Async Shell Command\\*"
         ;;   help-mode
         ;;   compilation-mode)
-	'("*slime-repl uv-python*" "*claude:~/ord/b-esim/:default*"))
+	'("*slime-repl uv-python*"))
   (popper-mode +1)
   (popper-echo-mode +1))                ; For echo area hints
 
@@ -726,11 +738,6 @@ Version 2016-11-22"
 
 (use-package magit  :custom  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ;fulllscreent
   ) 
-
-(use-package magit-delta
-  :hook (magit-mode . magit-delta-mode))
-
-(add-hook 'magit-mode-hook (lambda () (magit-delta-mode +1)))
 
 (use-package lab)
 
@@ -1265,17 +1272,24 @@ If region is active, transclude only selected lines."
 
 (require 'eaf-browser)
 
-(setq org-refile-targets '((nil :maxlevel . 3)
-                           (my-daily-note-today :tag . "archive")))
+(setq org-refile-targets '((nil :tag . "archive")))
+
+;; Auto-mark as DONE when refiling
+(defun my-refile-mark-done ()
+  "Mark heading as DONE after refiling."
+  (when (org-get-todo-state)
+    (org-todo "DONE")))
+
+(add-hook 'org-after-refile-insert-hook 'my-refile-mark-done)
 
 (defun my-daily-note-today ()
     (interactive)
     "Return today's daily note file path."
-    (let ((daily-file (expand-file-name
-                       (format-time-string "%Y-%m-%d.org")
-                       (expand-file-name "daily" "~/roam"))))
-      (list daily-file)))
- ; fallback for numbers > 10
+    (expand-file-name
+     (format-time-string "%Y-%m-%d.org")
+     (expand-file-name "daily" "~/roam")))
+
+(print (my-daily-note-today))
 
 (use-package anki-editor
   :defer t
