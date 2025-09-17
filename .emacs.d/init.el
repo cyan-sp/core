@@ -775,6 +775,15 @@ Version 2016-11-22"
 
 (diff-hl-flydiff-mode)
 
+(defun meld-project-root ()
+  "Open Meld with the current project root directory."
+  (interactive)
+  (if-let ((project (project-current)))
+      (let ((root (expand-file-name (project-root project))))  ; Add expand-file-name here
+        (start-process "meld" nil "meld" root)
+        (message "Opening Meld with project: %s" root))
+    (message "Not in a project. Use M-x meld-directory instead.")))
+
 (use-package blamer
   :straight (:host github :repo "artawower/blamer.el")
   :bind (("s-i" . blamer-show-posframe-commit-info))
