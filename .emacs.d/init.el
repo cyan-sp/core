@@ -121,6 +121,13 @@
    completion-category-defaults nil
    completion-category-overrides '((file (styles partial-completion)))))
 
+(use-package nano-theme
+  :straight (:type git :host github :repo "cyan-sp/nano-theme" :branch "master"))
+
+(load-theme 'nano-light t)
+(load-file "~/.core/.emacs.d/nano-theme/nano-theme-support.el")
+(load-theme 'nano-light t)
+
 (use-package modus-themes :ensure t)
 
 ;; As above, but with a purple style
@@ -633,7 +640,7 @@ Version 2016-11-22"
                   (propertize (concat "中:" (my-number-to-japanese mid-todos) " ")
                     'face `(:foreground ,(modus-themes-get-color-value 'yellow-cooler)))))))))
 
-(add-to-list 'mode-line-misc-info '(:eval (agenda-todo-segment)))
+;; (add-to-list 'mode-line-misc-info '(:eval (agenda-todo-segment)))
 
 (use-package popper
   :ensure t ; or :straight t
@@ -1005,7 +1012,8 @@ The completion candidates include the Git status of each file."
 (winner-mode)
 
 (define-abbrev-table 'global-abbrev-table
-  '(("rtr" "please read the repo" nil :count 0)))
+  '(("rtr" "please read the repo" nil :count 0)
+    ("iia" "if you think you need more info plase ask" nil :count 0)))
 
 (setq-default abbrev-mode t)
 
