@@ -1325,10 +1325,27 @@ If region is active, transclude only selected lines."
 
 (print (my-daily-note-today))
 
-(use-package anki-editor
-  :defer t
-  :straight (:repo "anki-editor/anki-editor"))
+(set-face-attribute 'font-lock-comment-face nil :slant 'italic)
 
-;; This assumes you've installed the package via MELPA.
-;; (use-package ef-rosa)
+(setq org-agenda-custom-commands
+      '(("d" "Daily Priorities"
+         ((tags-todo "+PRIORITY=\"A\"+TODO=\"TODO\""
+                     ((org-agenda-overriding-header "🔥 Critical Tasks")))
+          (tags-todo "+PRIORITY=\"B\"+TODO=\"TODO\""
+                     ((org-agenda-overriding-header "⚡ Important Tasks")))
+          (agenda "" ((org-agenda-span 1)
+                     (org-agenda-overriding-header "📅 Today's Schedule")))
+          (tags-todo "+PRIORITY=\"C\"+TODO=\"TODO\""
+                     ((org-agenda-overriding-header "📝 Other Tasks"))))
+         ((org-agenda-sorting-strategy '(priority-down time-up))))))
+
+(use-package elfeed-webkit
+  :ensure
+  :demand ;; !
+  :init
+  (setq elfeed-webkit-auto-enable-tags '(webkit comics))
+  :config
+  (elfeed-webkit-auto-toggle-by-tag)
+  :bind (:map elfeed-show-mode-map
+              ("%" . elfeed-webkit-toggle)))
 
