@@ -356,6 +356,8 @@ Version 2016-11-22"
 
 (use-package groovy-mode :ensure t)
 
+(use-package typescript-mode)
+
 (use-package uv :straight (uv :type git :host github :repo "johannes-mueller/uv.el"))
 
 (use-package markdown-mode)
@@ -746,6 +748,8 @@ Version 2016-11-22"
 (use-package magit  :custom  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ;fulllscreent
   ) 
 
+(setq magit-list-refs-sortby "-creatordate") ;https://www.reddit.com/r/emacs/comments/14eaiz0/magitbranchcheckout_list_order/
+
 (use-package lab)
 
 (setq lab-host "https://gitlab.ordenaris.com/")
@@ -1022,7 +1026,11 @@ The completion candidates include the Git status of each file."
 
 (define-abbrev-table 'global-abbrev-table
   '(("rtr" "please read the repo" nil :count 0)
-    ("iia" "if you think you need more info plase ask" nil :count 0)))
+    ("iia" "if you think you need more info plase ask" nil :count 0)
+    ("idu" "i dont understand")
+    ("se" "subtle elegant synonym of ")
+    ("cc" "can you help me with a commit message ?")
+))
 
 (setq-default abbrev-mode t)
 
@@ -1136,7 +1144,6 @@ DIRECTION should be 'forward or 'backward."
           "https://simblob.blogspot.com/feeds/posts/default" ;; Red blob games 
           "https://planet.emacslife.com/atom.xml"
           ;; "https://www.reddit.com/r/orgmode.rss"
-          "https://www.reddit.com/r/Anki.rss"
           ;; "https://ag91.github.io/rss.xml" ;; Where parallels cross
           "https://www.rousette.org.uk/index.xml" ;; But she is a girl
           "https://karthinks.com/index.xml"
@@ -1146,7 +1153,6 @@ DIRECTION should be 'forward or 'backward."
           "https://www.reddit.com/r/AnkiComputerScience.rss"
           "https://whhone.com/index.xml"      ;; https://whhone.com/posts/para-org-mode/
           ;; "https://emacs.stackexchange.com/feeds"
-          ;; "https://clojure.stackexchange.com/feeds"
           "https://www.reddit.com/r/Clojure.rss"
           "https://www.reddit.com/r/Clojurescript.rss"
           "https://www.reddit.com/r/lisp.rss"
@@ -1158,8 +1164,19 @@ DIRECTION should be 'forward or 'backward."
           "https://shaarli.lain.li/feed/atom?"
 	  "https://endlessparentheses.com/atom.xml"
 	  "https://www.cyan.sh/blog/feed.xml"
-	  "https://www.reddit.com/r/Meditation.rss"
 	  )))
+
+(use-package anki-editor
+  :defer t
+  :straight (:repo "anki-editor/anki-editor"))
+
+(defun wwwjdic (word)
+  (interactive "sSearch term: ")
+  (let ((url-request-method "POST")
+        (url-request-data (format "dsrchkey=%s&dicsel=1&dsrchtype=J" (url-hexify-string word))))
+    (eww "http://wwwjdic.biz/cgi-bin/wwwjdic?1F")))
+
+(use-package kana)
 
 (use-package nov)
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
