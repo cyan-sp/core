@@ -9,8 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "commit mono" :weight 'normal    :height 165)
-(set-face-attribute 'variable-pitch nil :family "commit mono" :weight 'normal    :height 165)
+(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 145)
+(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 150)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
@@ -355,6 +355,8 @@ Version 2016-11-22"
 (setq whitespace-style '(face spaces space-mark))
 
 (use-package groovy-mode :ensure t)
+
+(auto-revert-mode)
 
 (use-package typescript-mode)
 
@@ -747,6 +749,8 @@ Version 2016-11-22"
 
 (use-package magit  :custom  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ;fulllscreent
   ) 
+
+(setq magit-diff-refine-hunk (quote all))
 
 (setq magit-list-refs-sortby "-creatordate") ;https://www.reddit.com/r/emacs/comments/14eaiz0/magitbranchcheckout_list_order/
 
@@ -1305,16 +1309,6 @@ If region is active, transclude only selected lines."
 	     ))
 
 (require 'eaf-browser)
-
-(setq org-refile-targets '((nil :tag . "archive")))
-
-;; Auto-mark as DONE when refiling
-(defun my-refile-mark-done ()
-  "Mark heading as DONE after refiling."
-  (when (org-get-todo-state)
-    (org-todo "DONE")))
-
-(add-hook 'org-after-refile-insert-hook 'my-refile-mark-done)
 
 (defun my-daily-note-today ()
     (interactive)
