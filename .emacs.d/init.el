@@ -1330,13 +1330,13 @@ If region is active, transclude only selected lines."
 (setq org-agenda-custom-commands
       '(("d" "Daily Priorities"
          ((tags-todo "+PRIORITY=\"A\"+TODO=\"TODO\""
-                     ((org-agenda-overriding-header "🔥 Critical Tasks")))
+                     ((org-agenda-overriding-header "緊 Critical Tasks")))
           (tags-todo "+PRIORITY=\"B\"+TODO=\"TODO\""
-                     ((org-agenda-overriding-header "⚡ Important Tasks")))
+                     ((org-agenda-overriding-header "重 Important Tasks")))
           (agenda "" ((org-agenda-span 1)
-                     (org-agenda-overriding-header "📅 Today's Schedule")))
+                     (org-agenda-overriding-header "今 Today's Schedule")))
           (tags-todo "+PRIORITY=\"C\"+TODO=\"TODO\""
-                     ((org-agenda-overriding-header "📝 Other Tasks"))))
+                     ((org-agenda-overriding-header "他 Other Tasks"))))
          ((org-agenda-sorting-strategy '(priority-down time-up))))))
 
 (use-package elfeed-webkit
