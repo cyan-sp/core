@@ -1208,6 +1208,18 @@ DIRECTION should be 'forward or 'backward."
 (use-package nov)
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
+(use-package pdf-tools
+  :config
+  (pdf-tools-install))
+
+(use-package pdf-view-restore
+    :after pdf-tools
+    :config
+    (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
+
+(use-package org-pdftools
+  :hook (org-mode . org-pdftools-setup-link))
+
 (use-package org-remark
   :bind (;; :bind keyword also implicitly defers org-remark itself.
          ;; Keybindings before :map is set for global-map. Adjust the keybinds
