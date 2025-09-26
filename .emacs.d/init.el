@@ -150,11 +150,34 @@
 
 	))
 
+(defun my-modus-themes-tab-bar-custom-faces (&rest _)
+  (modus-themes-with-colors
+    (custom-set-faces
+     ;; Tab bar styling - subtle inactive tabs like nano theme
+     `(tab-bar ((,c :foreground ,fg-main
+                    :background ,bg-dim
+                    :box (:line-width 1 :color ,border :style nil))))
+     
+     `(tab-bar-tab ((,c :foreground ,fg-main
+                        :background ,bg-dim
+                        :weight normal
+                        :box (:line-width 1 :color ,border :style nil))))
+     
+     `(tab-bar-tab-inactive ((,c :foreground ,fg-dim
+                                 :background ,bg-dim
+                                 :weight normal
+                                 :box (:line-width 1 :color ,border :style nil)))))))
+
+
+
+  ;; Hook it to apply when theme loads
+(add-hook 'modus-themes-after-load-theme-hook #'my-modus-themes-tab-bar-custom-faces)
+
 (setq modus-themes-italic-constructs t)
 
 (setq modus-themes-bold-constructs nil)
 
-;; (modus-themes-load-theme 'modus-vivendi-tinted)
+(modus-themes-load-theme 'modus-operandi)
 
 (use-package minions)
 
