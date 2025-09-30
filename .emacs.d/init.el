@@ -9,8 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 145)
-(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 150)
+(set-face-attribute 'default nil :family "ubuntu mono" :weight 'normal    :height 150)
+(set-face-attribute 'variable-pitch nil :family "ubuntu sans" :weight 'normal    :height 150)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
@@ -167,8 +167,6 @@
                                  :background ,bg-dim
                                  :weight normal
                                  :box (:line-width 1 :color ,border :style nil)))))))
-
-
 
   ;; Hook it to apply when theme loads
 (add-hook 'modus-themes-after-load-theme-hook #'my-modus-themes-tab-bar-custom-faces)
@@ -379,7 +377,13 @@ Version 2016-11-22"
 
 (use-package groovy-mode :ensure t)
 
-(auto-revert-mode)
+(use-package lsp-mode)
+
+(use-package treemacs)
+
+(use-package rust-mode)
+
+ (global-auto-revert-mode 1)
 
 (use-package typescript-mode)
 
@@ -423,26 +427,6 @@ Version 2016-11-22"
 ;;   ;; Enables ligature checks globally in all buffers. You can also do it
 ;;   ;; per mode with `ligature-mode'.
 ;;   (global-ligature-mode t))
-
-;; Install SLIME via straight
-(straight-use-package 'slime)
-
-;; Install slime-star via straight (from GitHub)
-(straight-use-package 
- '(slime-star :type git :host github :repo "mmontone/slime-star"))
-
-(add-to-list 'load-path "~/.core/.emacs.d/swanky-python/slimy-python")
-(push 'slime-py slime-contribs)
-
-(slime-setup slime-contribs)
-
-(bind-key* "C-x C-e" 
-  (lambda ()
-    (interactive)
-    (if (and (eq major-mode 'python-mode) 
-             (fboundp 'slime-py-eval-statement-at-point))
-        (slime-py-eval-statement-at-point)
-      (eval-last-sexp nil))))
 
 ;;Enhanced tab-bar-mode configuration
 (use-package tab-bar
@@ -700,6 +684,7 @@ Version 2016-11-22"
          ("C-c n n" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
 	 ("C-c n t" . org-roam-dailies-find-today)
+	 ("C-c n c" . org-capture)
          ;; ("C-c n i" . org-roam-node-insert)
          ;; ("C-c n c" . org-roam-capture)
 	 ;; ("C-c n j" . org-roam-dailies-capture-today)
@@ -1055,8 +1040,9 @@ The completion candidates include the Git status of each file."
   '(("rtr" "please read the repo" nil :count 0)
     ("iia" "if you think you need more info plase ask" nil :count 0)
     ("idu" "i dont understand")
-    ("se" "subtle elegant synonym of ")
+    ("sen" "subtle elegant synonym of ")
     ("cc" "can you help me with a commit message ?")
+    ("jas" "just asking")
 ))
 
 (setq-default abbrev-mode t)
@@ -1142,6 +1128,12 @@ DIRECTION should be 'forward or 'backward."
  
 (add-hook 'prog-mode-hook (lambda () (rainbow-delimiters-mode +1)
 			    (hl-todo-mode +1)))
+
+(use-package highlight-symbol
+  :ensure t
+  :config
+  (setq highlight-symbol-on-navigation-p t)
+  (add-hook 'prog-mode-hook 'highlight-symbol-mode))
 
 (set-register ?i (cons 'file "~/.core/.emacs.d/init.el"))
 
@@ -1377,4 +1369,16 @@ If region is active, transclude only selected lines."
   (elfeed-webkit-auto-toggle-by-tag)
   :bind (:map elfeed-show-mode-map
               ("%" . elfeed-webkit-toggle)))
+
+(setq org-tag-alist '((:startgroup . nil)
+                      ("@task" . ?t)
+                      (:endgroup . nil)
+                      ("urgent" . ?u)
+		      ))
+
+(setq org-capture-templates
+      '(("e" "Emacs Todo" entry
+         (file+headline "~/roam/20250718134508-emacs.org" "Project")
+         "** TODO [#B] %?\n   Added: %U\n   "
+         :empty-lines 1)))
 
