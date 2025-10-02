@@ -359,7 +359,8 @@ Version 2016-11-22"
  '("g" . magit-status)
  '("a" . org-agenda)
  '("f" . project-find-file)
- '("s" . consult-grep))
+ '("s" . consult-grep)
+ '("t" . claude-code-toggle))
 
 (defun indent-whole-buffer ()
   "Indent the entire buffer without affecting point or mark."
@@ -665,7 +666,8 @@ Version 2016-11-22"
         ;;   "\\*Async Shell Command\\*"
         ;;   help-mode
         ;;   compilation-mode)
-	'("*slime-repl uv-python*"))
+
+	'("*slime-repl uv-python*" "*Flymake diagnostics for `main.rs'*"))
   (popper-mode +1)
   (popper-echo-mode +1))                ; For echo area hints
 
@@ -1143,6 +1145,23 @@ DIRECTION should be 'forward or 'backward."
     (diredfl-global-mode 1))		; colors !
 
 (add-hook 'dired-load-hook (function (lambda () (load "dired-x")))) ; good for untar 
+
+(use-package dired-hacks)
+
+(defun dired-run-file-at-point ()
+  "Execute the file at point with ./"
+  (interactive)
+  (let* ((file (dired-get-filename nil t))
+         (dir (file-name-directory file))
+         (default-directory dir))
+    (when file
+      (shell-command (concat "./" (file-name-nondirectory file))))))
+
+(define-key dired-mode-map (kbd "C-c x") 'dired-run-file-at-point)
+
+(use-package dired-sidebar
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar))
 
 (use-package elfeed
   :bind ((:map elfeed-search-mode-map
