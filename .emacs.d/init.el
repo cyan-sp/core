@@ -81,6 +81,8 @@
 
 (use-package vterm :ensure t)
 
+(use-package multi-vterm :ensure t)
+
 (use-package claude-code
   :straight (:type git :host github :repo "stevemolitor/claude-code.el" :branch "main" :depth 1
                    :files ("*.el" (:exclude "images/*")))
@@ -780,11 +782,20 @@ Version 2016-11-22"
 
 (setq magit-list-refs-sortby "-creatordate") ;https://www.reddit.com/r/emacs/comments/14eaiz0/magitbranchcheckout_list_order/
 
+(defun magit-add-current-buffer-to-kill-ring ()
+  "Show the current branch in the echo-area and add it to the `kill-ring'."
+  (interactive)
+  (let ((branch (magit-get-current-branch)))
+    (if branch
+        (progn (kill-new branch)
+               (message "%s" branch))
+      (user-error "There is not current branch"))))
+
+(use-package cond-let :straight (:type git :host github :repo "tarsius/cond-let"))
+
 (use-package forge :after magit)
 
 (use-package closql)
-
-(use-package cond-let :straight (:type git :host github :repo "tarsius/cond-let"))
 
 (setq auth-sources '("~/.authinfo"))
 
@@ -1071,9 +1082,10 @@ The completion candidates include the Git status of each file."
     ("idu" "i dont understand")
     ("sen" "subtle elegant synonym of ")
     ("cc" "can you help me with a commit message ?")
-    ("jas" "just asking")
-))
+    ("jas" "just asking")))
 
+;; (setq global-abbrev-table nil)
+;; se
 (setq-default abbrev-mode t)
 
 ;; (use-package yasnippet
