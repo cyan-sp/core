@@ -378,11 +378,27 @@ Version 2016-11-22"
 
 (use-package groovy-mode :ensure t)
 
-(use-package lsp-mode)
+(use-package sly)
+
+(use-package cider)
+
+(use-package flycheck
+  :ensure t
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :hook ((lsp-configure . lsp-lens-mode))
+  :custom
+  (lsp-diagnostics-provider :flycheck))
 
 (use-package treemacs)
 
 (use-package rust-mode)
+
+(add-hook 'rust-mode-hook 'lsp)
 
  (global-auto-revert-mode 1)
 
@@ -763,6 +779,17 @@ Version 2016-11-22"
 (setq magit-diff-refine-hunk (quote all))
 
 (setq magit-list-refs-sortby "-creatordate") ;https://www.reddit.com/r/emacs/comments/14eaiz0/magitbranchcheckout_list_order/
+
+(use-package forge :after magit)
+
+(use-package closql)
+
+(use-package cond-let :straight (:type git :host github :repo "tarsius/cond-let"))
+
+(setq auth-sources '("~/.authinfo"))
+
+(setq forge-alist
+      '(("gitlab.ordenaris.com" "gitlab.ordenaris.com/api/v4" "gitlab.ordenaris.com" forge-gitlab-repository)))
 
 (use-package lab)
 
