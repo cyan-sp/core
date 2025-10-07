@@ -179,6 +179,27 @@
 
 (modus-themes-load-theme 'modus-operandi)
 
+(use-package ef-themes)
+
+(defun my-ef-themes-mode-line ()
+  "Tweak the style of the mode lines."
+  (ef-themes-with-colors
+    (custom-set-faces
+     `(mode-line ((t :box (:line-width 1 :color ,blue-cooler))))
+     ;; `(mode-line-inactive ((t :box (:line-width 1 :color ,fg-dim))))
+     )))
+
+(add-hook 'ef-themes-post-load-hook #'my-ef-themes-mode-line)
+
+(ef-themes-load-theme 'ef-light)
+
+(use-package nyan-mode)
+
+(setq nyan-bar-length 16)
+
+(nyan-mode)
+
+(nyan-start-animation)
 (use-package minions)
 
 (minions-mode)
@@ -1081,13 +1102,11 @@ The completion candidates include the Git status of each file."
     ("iia" "if you think you need more info plase ask" nil :count 0)
     ("idu" "i dont understand")
     ("sen" "subtle elegant synonym of ")
-    ("cc" "can you help me with a commit message ?")
-    ("jas" "just asking")))
+    ("cc" "can you help me with a commit message without the body give alternatives ?")
+    ("jas" "just asking")
+    ("wt" "what do you think ?")))
 
-;; (setq global-abbrev-table nil)
-;; se
 (setq-default abbrev-mode t)
-
 ;; (use-package yasnippet
 ;;   :bind (:map yas-minor-mode-map
 ;;               ("TAB" . nil)
@@ -1379,6 +1398,90 @@ If region is active, transclude only selected lines."
   (message "Vterm highlights cleared"))
 
 (modus-themes-get-color-value 'red-intense)
+
+(defgroup vterm-log-group nil
+  "Group for vterm-style log highlighting"
+  :prefix "vterm-log-")
+
+;; Store highlight regexp objects for cleanup
+(defvar-local vterm-log-highlights nil
+  "List of highlight regexp objects for cleanup.")
+
+(define-minor-mode vterm-log-mode
+  "Minor mode for log highlighting in vterm using font-lock faces.
+This mode uses highlight-regexp overlays instead of font-lock."
+  :init-value nil
+  :lighter " VLog"
+  :group 'vterm-log-group
+  (if vterm-log-mode
+      ;; Enable
+      (when (eq major-mode 'vterm-mode)
+        ;; Clear any existing highlights first
+        (dolist (hi vterm-log-highlights)
+          (when hi (unhighlight-regexp hi)))
+        (setq vterm-log-highlights nil)
+        
+        ;; Apply highlights using font-lock faces
+        (setq vterm-log-highlights
+              (list
+               ;; Timestamps - using constant face
+               (highlight-regexp "\\b[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}\\s-+[0-9]\\{2\\}:[0-9]\\{2\\}:[0-9]\\{2\\}\\b" 'font-lock-constant-face)
+               
+               ;; UUIDs and hashes (32 char hex) - using comment face
+               (highlight-regexp "\\b[a-f0-9]\\{32\\}\\b" 'font-lock-comment-face)
+               
+	       ;; git-commit-keyword
+
+               ;; Success/OK messages - using string face
+               (highlight-regexp "\\b\\(Success\\|SUCCESS\\|SUCCESSFUL\\|OK\\|success\\|exitosamente\\|completado\\|terminado\\)\\b" 'success)
+               
+               ;; Error/Warning messages - using warning face
+               (highlight-regexp "\\b\\(Error\\|ERROR\\|FAILED\\|FAILURE\\|error\\|failed\\)\\b" 'font-lock-warning-face)
+               
+               ;; Warning messages - using keyword face
+               (highlight-regexp "\\b\\(Warning\\|WARNING\\|WARN\\|warn\\|Advertencia\\)\\b" 'font-lock-keyword-face)
+               
+               ;; File paths - using doc face
+               (highlight-regexp "/[a-zA-Z0-9/_.-]+" 'font-lock-doc-face)
+               
+               ;; URLs and domains - using function name face
+               (highlight-regexp "\\bhttps?://[a-zA-Z0-9._/-]+" 'font-lock-function-name-face)
+               (highlight-regexp "\\b[a-zA-Z0-9.-]+\\.\\(com\\|net\\|org\\|io\\|groovy\\|csv\\|zip\\)\\b" 'font-lock-function-name-face)
+               
+               ;; Numbers (integers and decimals) - using number face
+               (highlight-regexp "\\b[0-9]+\\(\\.[0-9]+\\)?\\b" 'font-lock-number-face)
+               
+               ;; Log levels/markers - using builtin face
+               (highlight-regexp ":::=>" 'git-commit-keyword)
+               (highlight-regexp "(O\\.o)" 'git-commit-keyword)
+               
+               ;; Pipe separator - using punctuation face
+               (highlight-regexp "|" 'font-lock-punctuation-face)
+               
+               ;; Service/class names ending in .groovy - using type face
+               (highlight-regexp "[A-Z][a-zA-Z]*Service\\.groovy" 'font-lock-type-face)
+               (highlight-regexp "[A-Z][a-zA-Z]*\\.groovy" 'font-lock-type-face)
+               
+               ;; Environment markers - using preprocessor face
+               (highlight-regexp "\\b\\(development\\|production\\|staging\\|test\\)\\b" 'font-lock-preprocessor-face)))
+        
+        (message "VTerm log highlighting enabled"))
+    
+    ;; Disable
+    (when vterm-log-highlights
+      (dolist (hi vterm-log-highlights)
+        (when hi (unhighlight-regexp hi)))
+      (setq vterm-log-highlights nil)
+      (message "VTerm log highlighting disabled"))))
+
+;; Auto-enable in vterm buffers
+(defun vterm-log-mode-maybe-enable ()
+  "Enable vterm-log-mode if in a vterm buffer."
+  (when (derived-mode-p 'vterm-mode)
+    (vterm-log-mode 1)))
+
+;; Uncomment to enable automatically in all vterm buffers:
+(add-hook 'vterm-mode-hook #'vterm-log-mode-maybe-enable)
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
 
