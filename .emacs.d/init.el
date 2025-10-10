@@ -9,8 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "ubuntu mono" :weight 'normal    :height 150)
-(set-face-attribute 'variable-pitch nil :family "ubuntu sans" :weight 'normal    :height 150)
+(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 140)
+(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 140)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
@@ -391,6 +391,14 @@ Version 2016-11-22"
   (save-excursion
     (save-restriction
       (indent-region (point-min) (point-max)))))
+
+(defun clean-whitespace-region (start end)
+  "Untabifies, removes trailing whitespace, and re-indents the region"
+  (interactive "r")
+  (save-excursion
+    (untabify start end)
+    (c-indent-region start end)
+    (replace-regexp "[  ]+$" "" nil start end))) ;// uses literal space and tab chars
 
 (setq-default show-trailing-whitespace nil)
 (setq whitespace-display-mappings '((space-mark 32 [?·])))
@@ -1102,7 +1110,7 @@ The completion candidates include the Git status of each file."
     ("iia" "if you think you need more info plase ask" nil :count 0)
     ("idu" "i dont understand")
     ("sen" "subtle elegant synonym of ")
-    ("cc" "can you help me with a commit message without the body give alternatives ?")
+    ("cc" "can you help me with a commit message without the body give alternatives ? this time in spanish please")
     ("jas" "just asking")
     ("wt" "what do you think ?")))
 
@@ -1187,7 +1195,8 @@ DIRECTION should be 'forward or 'backward."
 (use-package rainbow-delimiters)
  
 (add-hook 'prog-mode-hook (lambda () (rainbow-delimiters-mode +1)
-			    (hl-todo-mode +1)))
+			    (hl-todo-mode +1)
+			    (whitespace-mode +1)))
 
 (use-package highlight-symbol
   :ensure t
@@ -1436,7 +1445,7 @@ This mode uses highlight-regexp overlays instead of font-lock."
                (highlight-regexp "\\b\\(Success\\|SUCCESS\\|SUCCESSFUL\\|OK\\|success\\|exitosamente\\|completado\\|terminado\\)\\b" 'success)
                
                ;; Error/Warning messages - using warning face
-               (highlight-regexp "\\b\\(Error\\|ERROR\\|FAILED\\|FAILURE\\|error\\|failed\\)\\b" 'font-lock-warning-face)
+               (highlight-regexp "\\b\\(Error\\|ERROR\\|FAILED\\|FAILURE\\|error\\|failed\\)\\b" 'compilation-warning)
                
                ;; Warning messages - using keyword face
                (highlight-regexp "\\b\\(Warning\\|WARNING\\|WARN\\|warn\\|Advertencia\\)\\b" 'font-lock-keyword-face)
