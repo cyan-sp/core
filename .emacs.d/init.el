@@ -181,25 +181,8 @@
 
 (use-package ef-themes)
 
-(defun my-ef-themes-mode-line ()
-  "Tweak the style of the mode lines."
-  (ef-themes-with-colors
-    (custom-set-faces
-     `(mode-line ((t :box (:line-width 1 :color ,blue-cooler))))
-     ;; `(mode-line-inactive ((t :box (:line-width 1 :color ,fg-dim))))
-     )))
-
-(add-hook 'ef-themes-post-load-hook #'my-ef-themes-mode-line)
-
 (ef-themes-load-theme 'ef-light)
 
-(use-package nyan-mode)
-
-(setq nyan-bar-length 16)
-
-(nyan-mode)
-
-(nyan-start-animation)
 (use-package minions)
 
 (minions-mode)
@@ -265,8 +248,6 @@ Version 2016-11-22"
 
 (define-key meow-normal-state-keymap (kbd "M-n") #'forward-whitespace)
 (define-key meow-insert-state-keymap (kbd "M-n") #'forward-whitespace)
-(define-key meow-insert-state-keymap (kbd "C-.")#'mc/mark-next-like-this)
-(define-key meow-normal-state-keymap (kbd "C-.")#'mc/mark-next-like-this)
 (global-set-key (kbd "M-o") 'meow-to-block)
 
 (global-set-key (kbd "M-i") (lambda () (interactive) (forward-whitespace -1)))
@@ -400,7 +381,7 @@ Version 2016-11-22"
     (c-indent-region start end)
     (replace-regexp "[  ]+$" "" nil start end))) ;// uses literal space and tab chars
 
-(setq-default show-trailing-whitespace nil)
+(setq-default show-trailing-whitespace t)
 (setq whitespace-display-mappings '((space-mark 32 [?·])))
 ;; (setq whitespace-style '(space-mark))
 ;; (setq whitespace-display-mappings '((space-mark 32 [183] [46])))
@@ -451,31 +432,32 @@ Version 2016-11-22"
 
 (require 'ahk-mode)
 
-;; (use-package ligature
-;;   :config
-;;   ;; Enable the "www" ligature in every possible major mode
-;;   (ligature-set-ligatures 't '("www"))
-;;   ;; Enable traditional ligature support in eww-mode, if the
-;;   ;; `variable-pitch' face supports it
-;;   (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-;;   ;; Enable all Cascadia Code ligatures in programming modes
-;;   (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-;;                                        ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-;;                                        "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-;;                                        "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-;;                                        "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-;;                                        "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-;;                                        "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-;;                                        "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-;;                                        ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-;;                                        "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-;;                                        "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-;;                                        "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-;;                                        "\\\\" "://" "+="))
-;;   ;; Enables ligature checks globally in all buffers. You can also do it
-;;   ;; per mode with `ligature-mode'.
-;;   (global-ligature-mode t))
-
+(use-package show-font)
+;; This assumes you've installed the package via MELPA.
+(use-package ligature
+  :config
+  ;; Enable the "www" ligature in every possible major mode
+  (ligature-set-ligatures 't '("www"))
+  ;; Enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  ;; Enable all Cascadia Code ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                                       "\\\\" "://"))
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t))
 ;;Enhanced tab-bar-mode configuration
 (use-package tab-bar
   :ensure nil  ; Built-in package
@@ -981,13 +963,17 @@ The completion candidates include the Git status of each file."
 (setq org-startup-folded t)
 ;; (setq org-use-property-inheritance '("VISIBILITY"))
 
+(use-package ob-http)
+
 (with-eval-after-load 'org
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((sql . t)
    (shell . t)
-   (python . t)
-   )))
+   (http . t)
+   (python . t))))
+
+
 
 (setq org-babel-python-command "python3")
 
