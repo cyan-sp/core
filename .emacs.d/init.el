@@ -115,6 +115,53 @@
   :init
   (vertico-mode))
 
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode))
+
+(use-package embark
+  :ensure t
+
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ;; ("C-;" . embark-dwim)
+   ;; good alternative: M-.
+   ;; ("C-h B" . embark-bindings)
+   ) ;; alternative for `describe-bindings'
+
+  :init
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  ;; Show the Embark target at point via Eldoc. You may adjust the
+  ;; Eldoc strategy, if you want to see the documentation from
+  ;; multiple providers. Beware that using this can be a little
+  ;; jarring since the message shown in the minibuffer can be more
+  ;; than one line, causing the modeline to move up and down:
+
+  ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+
+  ;; Add Embark to the mouse context menu. Also enable `context-menu-mode'.
+  ;; (context-menu-mode 1)
+  ;; (add-hook 'context-menu-functions #'embark-context-menu 100)
+
+  :config
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+  ;;                nil
+  ;;                (window-parameters (mode-line-format . none))))
+  )
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t ; only need to install it, embark loads it after consult if found
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
 (use-package orderless									; vertico best friend (regexp)
   :init
   (setq
@@ -390,6 +437,27 @@ Version 2016-11-22"
 
 (use-package groovy-mode :ensure t)
 
+(defvar grails-logs-hidden nil
+  "Track whether Grails logs are currently hidden")
+
+(defun toggle-grails-logs ()
+  "Toggle visibility of verbose Grails logging statements"
+  (interactive)
+  (if grails-logs-hidden
+      (progn
+        (hide-lines-show-all)
+        (setq grails-logs-hidden nil)
+        (message "Grails logs shown"))
+    (progn
+      (hide-lines-matching "FuncionService\\.logger")
+      (hide-lines-matching "new Logs")
+      (hide-lines-matching "Log\\.logger")
+      (hide-lines-matching "println.*O\\.o")
+      (setq grails-logs-hidden t)
+      (message "Grails logs hidden"))))
+
+(global-set-key "\C-ch" 'toggle-grails-logs)
+
 (use-package sly)
 
 (use-package cider)
@@ -411,6 +479,15 @@ Version 2016-11-22"
 (use-package rust-mode)
 
 (add-hook 'rust-mode-hook 'lsp)
+
+(use-package yasnippet
+  :config
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets/"))
+  (setq yas-triggers-in-field t)
+  (yas-global-mode 1)
+  (yas-reload-all))
+
+(use-package hide-lines)
 
  (global-auto-revert-mode 1)
 
@@ -488,6 +565,11 @@ Version 2016-11-22"
   ("C-x t n" . tab-bar-new-tab)
   ("C-x t k" . tab-bar-close-tab)
   ("C-x t r" . tab-bar-rename-tab))
+
+(use-package tab-bar-echo-area
+  :ensure
+  :config
+  (tab-bar-echo-area-mode 1))
 
 ;; Custom tab naming function that shows project context
 (defun my/tab-bar-tab-name-with-project ()
@@ -929,6 +1011,16 @@ The completion candidates include the Git status of each file."
       (setq header-line-format nil))))
 
 (global-set-key (kbd "C-x u") 'winner-undo)
+
+(use-package nyan-mode)
+
+(setq nyan-bar-length 16)
+
+(nyan-mode)
+
+(nyan-start-animation)
+
+(setq nyan-wavy-trail t)
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
