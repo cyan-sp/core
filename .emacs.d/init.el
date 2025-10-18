@@ -1149,6 +1149,44 @@ The completion candidates include the Git status of each file."
 (electric-pair-mode 1)
 (setq electric-pair-pairs '((?\{ . ?\})))			;support "{}"
 
+(defun my-add-project-entry ()
+  "Add a project entry to today's daily note.
+  Creates '* <project branch>' heading if it doesn't exist,
+  then prompts for and adds '** <subheading>' with org timestamp below it,
+  and starts clocking the new entry."
+  (interactive)
+  (let* ((daily-file (my-daily-note-today))
+         (project-branch (magit-get-current-branch)) ; Get current git branch
+         (subheading (read-string (concat project-branch ": ")))
+         (project-heading (format "* %s" project-branch)))
+    ;; Open or create the daily file
+    (find-file daily-file)    
+    ;; Go to beginning of file
+    (goto-char (point-min))    
+    ;; Look for existing project heading
+    (if (re-search-forward (format "^\\* %s$" (regexp-quote project-branch)) nil t)
+        ;; Found existing heading, position after it
+        (progn
+          (end-of-line)
+          (newline))
+      ;; No existing heading, create it at the end
+      (progn
+        (goto-char (point-max))
+        (unless (bolp) (newline))
+        (insert project-heading)
+        (newline)))    
+    ;; Insert the subheading
+    (insert (format "** TODO %s " subheading))    
+    ;; Insert org timestamp
+    ;; (org-insert-time-stamp (current-time) t t)
+    ;; (newline)    
+    ;; Position cursor at the subheading and start clocking
+    (forward-line -1)
+    (beginning-of-line)
+    (org-clock-in)    
+    ;; Position cursor at end
+    (end-of-line)))
+
 (use-package crux)
 
 (use-package mwim
@@ -1670,4 +1708,8 @@ This mode uses highlight-regexp overlays instead of font-lock."
          (file+headline "~/roam/20250718134508-emacs.org" "Project")
          "** TODO [#B] %?\n   Added: %U\n   "
          :empty-lines 1)))
+
+(use-package tmr)
+
+(setq tmr-mode-line-mode t)
 
