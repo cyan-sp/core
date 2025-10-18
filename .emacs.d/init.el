@@ -458,9 +458,35 @@ Version 2016-11-22"
 
 (global-set-key "\C-ch" 'toggle-grails-logs)
 
+(defun clean-whitespace-region (start end)
+  "Untabifies, removes trailing whitespace, and re-indents the region"
+  (interactive "r")
+  (save-excursion
+    (untabify start end)
+    (c-indent-region start end)
+    (replace-regexp "[  ]+$" "" nil start end)))
+
+(defun clean-whitespace-buffer ()
+  "Clean whitespace in the entire buffer"
+  (interactive)
+  (clean-whitespace-region (point-min) (point-max)))
+
+(defun groovy-before-save-hook ()
+  "Clean whitespace before saving Groovy files"
+  (when (eq major-mode 'groovy-mode)
+    (clean-whitespace-buffer)))
+
+;; (add-hook 'before-save-hook 'groovy-before-save-hook)
+
 (use-package sly)
 
 (use-package cider)
+
+(use-package fennel-mode)
+
+(use-package antifennel)
+
+(use-package lua-mode)
 
 (use-package flycheck
   :ensure t
@@ -490,6 +516,8 @@ Version 2016-11-22"
 (use-package hide-lines)
 
  (global-auto-revert-mode 1)
+
+(use-package uniline)
 
 (use-package typescript-mode)
 
@@ -1206,13 +1234,26 @@ The completion candidates include the Git status of each file."
 ;;   (yas-global-mode 1))
 
 (defun insert-groovy-debug-line ()
-  "Insert a Groovy println statement with current file and line number."
-  (interactive)
-  (let ((filename (file-name-nondirectory (buffer-file-name)))
-        (line-num (line-number-at-pos)))
-    (insert (format "println \"\\n(O.o) %s::%d ${}\\n\"" filename line-num))))
-
-;; Bind to a key if desired
+    "Insert a Groovy println statement with current file and line number.
+  If region is active, use selected text as variable name in both places."
+    (interactive)
+    (let ((filename (file-name-nondirectory (buffer-file-name)))
+          (line-num (line-number-at-pos))
+          (variable (if (use-region-p)
+                        (buffer-substring-no-properties (region-beginning) (region-end))
+                      ""))
+          (current-indentation (save-excursion
+                                 (back-to-indentation)
+                                 (current-column))))
+      ;; Don't delete the region - just use it as the variable name
+      (end-of-line)
+      (newline)
+      ;; Insert proper indentation using spaces
+      (insert (make-string current-indentation ?\s))
+      (if (string-empty-p variable)
+          (insert (format "println \"\\n(O.o) %s::%d ${}\\n\"" filename line-num))
+        (insert (format "println \"\\n(O.o) %s::%d %s ${%s}\\n\"" filename line-num variable variable)))))
+  ;; Bind to a key if desired
 (define-key groovy-mode-map (kbd "C-c d") 'insert-groovy-debug-line)
 
 (use-package org-ql)
