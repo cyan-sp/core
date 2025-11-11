@@ -225,11 +225,9 @@
 (setq modus-themes-bold-constructs nil)
 
 (modus-themes-load-theme 'modus-operandi)
-
 (use-package ef-themes)
 
 (ef-themes-load-theme 'ef-light)
-
 (use-package minions)
 
 (minions-mode)
@@ -484,9 +482,10 @@ Version 2016-11-22"
 
 (use-package fennel-mode)
 
-(use-package antifennel)
-
 (use-package lua-mode)
+
+(use-package love2d-fennel
+  :straight (:type git :host codeberg :repo "alexjgriffith/love2d-fennel.el" ))
 
 (use-package flycheck
   :ensure t
@@ -967,7 +966,7 @@ Version 2016-11-22"
   :custom
   (blamer-idle-time 0.3)
   (blamer-min-offset 70)
-  (blamer-type 'posframe-popup)
+  (blamer-type 'echo-area)
   (blamer-show-avatar-p t)
   :custom-face
   (blamer-face ((t :foreground "#7a88cf"
@@ -1426,7 +1425,7 @@ DIRECTION should be 'forward or 'backward."
           "https://shaarli.lain.li/feed/atom?"
 	  "https://endlessparentheses.com/atom.xml"
 	  "https://www.cyan.sh/blog/feed.xml"
-	  )))
+	  "https://www.reddit.com/r/love2d.rss")))
 
 (use-package anki-editor
   :defer t
