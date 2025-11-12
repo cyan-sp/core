@@ -1159,6 +1159,30 @@ The completion candidates include the Git status of each file."
 (setq org-agenda-files nil)
 (add-hook 'org-mem-post-full-scan-functions #'my-set-agenda-files)
 
+(defvar my-org-heading-timestamp-mode nil
+  "When non-nil, automatically insert timestamp when creating new org headings.")
+
+(defun my-org-heading-timestamp-mode ()
+  "Toggle automatic timestamp insertion for new org headings."
+  (interactive)
+  (setq my-org-heading-timestamp-mode (not my-org-heading-timestamp-mode))
+  (message "Org heading timestamp mode %s"
+           (if my-org-heading-timestamp-mode "enabled" "disabled")))
+
+(defun my-org-insert-heading-respect-content-with-timestamp (&optional invisible-ok)
+  "Insert heading with respect to content and optionally add timestamp if mode is enabled."
+  (interactive "P")
+  ;; Call the original function
+  (org-insert-heading-respect-content invisible-ok)
+  ;; Add timestamp if mode is enabled
+  (when my-org-heading-timestamp-mode
+    (insert "")
+    (now)))
+
+;; Replace the original keybinding for C-<return>
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "C-<return>") 'my-org-insert-heading-respect-content-with-timestamp))
+
 (use-package consult)			;consult line
 
 (setq x-underline-at-descent-line t)
