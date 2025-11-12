@@ -502,6 +502,18 @@ Version 2016-11-22"
   :custom
   (lsp-diagnostics-provider :flycheck))
 
+(use-package eglot)
+
+(use-package company
+  :after lsp-mode
+  :hook 
+  (lisp-mode . company-mode)
+  (ess-r-mode . company-mode)
+  (sql-mode . company-mode)
+  (cider-mode . company-mode)
+  :bind (:map company-active-map
+              ("C-i" . company-complete-selection)))
+
 (use-package treemacs)
 
 (use-package rust-mode)
