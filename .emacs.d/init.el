@@ -9,8 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 140)
-(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 140)
+(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 135)
+(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 135)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
@@ -434,6 +434,9 @@ Version 2016-11-22"
 (setq whitespace-style '(face spaces space-mark))
 
 (use-package groovy-mode :ensure t)
+
+  (add-hook 'groovy-mode-hook
+            (lambda () (setq truncate-lines t)))
 
 (defvar grails-logs-hidden nil
   "Track whether Grails logs are currently hidden")
@@ -928,7 +931,7 @@ Version 2016-11-22"
 
 (setq lab-token "glpat-SwfBnMxrysFYGDMbTpiU")
 
-;; (use-package magit-todos  :after magit :config (magit-todos-mode 1))
+(use-package magit-todos  :after magit :config (magit-todos-mode 1))
 
 (use-package hl-todo)
 
@@ -1253,7 +1256,7 @@ The completion candidates include the Git status of each file."
     ("iia" "if you think you need more info plase ask" nil :count 0)
     ("idu" "i dont understand")
     ("sen" "subtle elegant synonym of ")
-    ("cc" "can you help me with a commit message without the body give alternatives ? this time in spanish please")
+    ("cc" "can you help me with a commit message without the body ? give altenartives, this time in spanish please, dont use ascents")
     ("jas" "just asking")
     ("wt" "what do you think ?")))
 
@@ -1514,53 +1517,6 @@ If region is active, transclude only selected lines."
    ";;  ￣￣￣￣￣＼/＿＿＿＿/\n\n"))
 
 (setq initial-scratch-message (my-scratch-message))
-
-
-(defun vterm-highlight-logs-modus ()
-  "Simple highlighting for vterm logs using Modus theme colors."
-  (interactive)
-  (when (eq major-mode 'vterm-mode)
-    (let ((red-color (modus-themes-get-color-value 'red-intense))
-          (green-color (modus-themes-get-color-value 'green-intense))
-          (blue-color (modus-themes-get-color-value 'blue-intense))
-          (yellow-color (modus-themes-get-color-value 'yellow-intense))
-          (magenta-color (modus-themes-get-color-value 'magenta)))
-      
-      ;; Define custom faces using Modus colors - foreground only
-      (defface vterm-modus-error-face
-        `((t (:foreground ,red-color :weight bold)))
-        "Error face for vterm using Modus colors.")
-      
-      (defface vterm-modus-success-face
-        `((t (:foreground ,green-color :weight bold)))
-        "Success face for vterm using Modus colors.")
-      
-      (defface vterm-modus-timestamp-face
-        `((t (:foreground ,blue-color :weight normal)))
-        "Timestamp face for vterm using Modus colors.")
-      
-      (defface vterm-modus-uuid-face
-        `((t (:foreground ,yellow-color)))
-        "UUID face for vterm using Modus colors.")
-      
-      (defface vterm-modus-service-face
-        `((t (:foreground ,magenta-color :weight normal)))
-        "Service name face for vterm using Modus colors.")
-      
-      ;; Apply highlights
-      (highlight-regexp "Permission denied\\|ERROR\\|FAIL" 'vterm-modus-error-face)
-      (highlight-regexp "BUILD SUCCESSFUL\\|CONFIGURE SUCCESSFUL\\|asignada\\|terminado" 'vterm-modus-success-face)
-      (highlight-regexp "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\} [0-9]\\{2\\}:[0-9]\\{2\\}:[0-9]\\{2\\}" 'vterm-modus-timestamp-face)
-      (highlight-regexp "[a-f0-9]\\{32\\}" 'vterm-modus-uuid-face)
-      (highlight-regexp "esimBait\\|WebHook\\|Esim\\|Grails" 'vterm-modus-service-face)
-      
-      (message "Vterm Modus theme highlighting applied"))))
-
-(defun vterm-clear-highlights ()
-  "Clear all highlights in vterm buffer."
-  (interactive)
-  (unhighlight-regexp t)
-  (message "Vterm highlights cleared"))
 
 (modus-themes-get-color-value 'red-intense)
 
