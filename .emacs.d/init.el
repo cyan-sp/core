@@ -913,6 +913,26 @@ Version 2016-11-22"
 (use-package magit  :custom  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ;fulllscreent
   ) 
 
+;; (setq smerge-command-prefix (kbd "C-c v"))
+(eval-after-load 'smerge-mode
+  (lambda ()
+    (define-key smerge-mode-map (kbd "C-c v") smerge-basic-map)
+    ;; (define-key smerge-mode-map (kbd "C-c C-v") smerge-basic-map)
+    ))
+
+(defun diff-last-two-kills (&optional ediff?)
+  "Diff last couple of things in the kill-ring. With prefix open ediff."
+  (interactive "P")
+  (let ((old-buffer (generate-new-buffer " *old-kill*"))
+        (new-buffer (generate-new-buffer " *new-kill*")))
+    (with-current-buffer new-buffer
+      (insert (current-kill 0 t)))
+    (with-current-buffer old-buffer
+      (insert (current-kill 1 t)))
+    (if ediff?
+        (ediff-buffers old-buffer new-buffer)
+      (diff old-buffer new-buffer nil t))))
+
 (setq magit-diff-refine-hunk (quote all))
 
 (setq magit-list-refs-sortby "-creatordate") ;https://www.reddit.com/r/emacs/comments/14eaiz0/magitbranchcheckout_list_order/
@@ -1095,9 +1115,11 @@ The completion candidates include the Git status of each file."
 ;; (setq org-startup-folded 'showeverything)  ; This allows :VISIBILITY: properties to take precedence
 
 (setq org-startup-folded t)
+(setq org-todo-keywords '((sequence "TODO" "DONE")))
 ;; (setq org-use-property-inheritance '("VISIBILITY"))
 
 (use-package ob-http)
+(use-package org-side-tree)
 
 (with-eval-after-load 'org
 (org-babel-do-load-languages
@@ -1197,7 +1219,6 @@ The completion candidates include the Git status of each file."
     ;; Position cursor at the subheading and start clocking
     (forward-line -1)
     (beginning-of-line)
-    (org-clock-in)    
     ;; Position cursor at end
     (end-of-line)))
 
