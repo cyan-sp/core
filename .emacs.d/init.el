@@ -1120,6 +1120,9 @@ The completion candidates include the Git status of each file."
 
 (use-package ob-http)
 (use-package org-side-tree)
+(use-package orgit)
+
+(define-key groovy-mode-map (kbd "C-x v t") 'blamer-show-posframe-commit-info)
 
 (with-eval-after-load 'org
 (org-babel-do-load-languages
@@ -1129,14 +1132,10 @@ The completion candidates include the Git status of each file."
    (http . t)
    (python . t))))
 
-
-
 (setq org-babel-python-command "python3")
 
 (defun efs/org-mode-setup ()
-  (org-modern-mode 1)
-  ;; (buffer-face-set :height 165)
-  )
+  (org-modern-mode 1))
 
 (use-package org-mem)
 
