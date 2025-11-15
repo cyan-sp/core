@@ -9,8 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 135)
-(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 135)
+(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 130)
+(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 130)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
@@ -459,6 +459,17 @@ Version 2016-11-22"
 
 (global-set-key "\C-ch" 'toggle-grails-logs)
 
+(defun connect-to-inew-mysql ()
+    "Connect to the inew MySQL Docker container"
+    (interactive)
+    (docker-container-shell "inew-dev-3307"))
+
+  (defun mysql-inew-console ()
+    "Open MySQL console in inew container"
+    (interactive)
+    (let ((command "docker exec -it inew-dev-3307 mysql -u root -ptoast inew_connections"))
+      (async-shell-command command "*MySQL-inew*")))
+
 (defun clean-whitespace-region (start end)
   "Untabifies, removes trailing whitespace, and re-indents the region"
   (interactive "r")
@@ -501,6 +512,8 @@ Version 2016-11-22"
   :hook ((lsp-configure . lsp-lens-mode))
   :custom
   (lsp-diagnostics-provider :flycheck))
+
+(setq-default indent-tabs-mode nil)	;https://www.reddit.com/r/emacs/comments/1oj7zhi/tabs_with_four_space_indent/
 
 (use-package eglot)
 
@@ -1120,6 +1133,9 @@ The completion candidates include the Git status of each file."
 
 (use-package ob-http)
 (use-package org-side-tree)
+(setq org-side-tree-enable-folding t) 	;; for org side tree
+(setq outline-minor-mode-cycle t) ;; for org side tree
+
 (use-package orgit)
 
 (define-key groovy-mode-map (kbd "C-x v t") 'blamer-show-posframe-commit-info)
@@ -1723,4 +1739,7 @@ This mode uses highlight-regexp overlays instead of font-lock."
 (use-package tmr)
 
 (setq tmr-mode-line-mode t)
+
+(use-package docker
+  :ensure t)
 
