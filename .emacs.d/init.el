@@ -9,8 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 130)
-(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 130)
+(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 120)
+(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 120)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
@@ -195,9 +195,7 @@
         (docstring cyan-faint)
         (string fg-lavender)
         (type cyan-warmer)
-        (variable blue-warmer)
-
-	))
+        (variable blue-warmer)))
 
 (defun my-modus-themes-tab-bar-custom-faces (&rest _)
   (modus-themes-with-colors
@@ -610,7 +608,7 @@ Version 2016-11-22"
 	) ; Clean format
   
   ;; Improved tab naming function
-  (setq tab-bar-tab-name-function 'my/tab-bar-tab-name-with-project)
+  (setq tab-bar-tab-name-function 'tab-bar-tab-name-current)
   
   :bind
   ;; Keep your existing keybindings
@@ -1329,6 +1327,7 @@ The completion candidates include the Git status of each file."
     ("idu" "i dont understand")
     ("sen" "subtle elegant synonym of ")
     ("cc" "can you help me with a commit message without the body ? give altenartives, this time in spanish please, dont use ascents")
+    ("gt" "can you help me with a gitlab merge request description focused and simple only description, this time in spanish please, dont use ascents")
     ("jas" "just asking")
     ("wt" "what do you think ?")))
 
@@ -1500,7 +1499,9 @@ DIRECTION should be 'forward or 'backward."
           "https://shaarli.lain.li/feed/atom?"
 	  "https://endlessparentheses.com/atom.xml"
 	  "https://www.cyan.sh/blog/feed.xml"
-	  "https://www.reddit.com/r/love2d.rss")))
+	  "https://www.reddit.com/r/love2d.rss"
+          "https://www.reddit.com/r/ElinsInn.rss"
+          "https://flandrew.srht.site/listful/feed/all.xml")))
 
 (use-package anki-editor
   :defer t
@@ -1728,6 +1729,7 @@ This mode uses highlight-regexp overlays instead of font-lock."
                       ("@task" . ?t)
                       (:endgroup . nil)
                       ("urgent" . ?u)
+                      ("@doc" . ?d)
 		      ))
 
 (setq org-capture-templates
