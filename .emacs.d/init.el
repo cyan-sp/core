@@ -9,8 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 120)
-(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 120)
+(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 125)
+(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 125)
 
 (setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
 
@@ -222,7 +222,7 @@
 
 (setq modus-themes-bold-constructs nil)
 
-(modus-themes-load-theme 'modus-operandi)
+;; (modus-themes-load-theme 'modus-operandi)
 (use-package ef-themes)
 
 (ef-themes-load-theme 'ef-light)
@@ -293,7 +293,7 @@ Version 2016-11-22"
 (define-key meow-insert-state-keymap (kbd "M-n") #'forward-whitespace)
 (global-set-key (kbd "M-o") 'meow-to-block)
 
-(global-set-key (kbd "M-i") (lambda () (interactive) (forward-whitespace -1)))
+(global-set-key (kbd "M-i") (lambda () (interactive) (forward-whitespace -1))) ;; default is like tabbing
 (global-set-key (kbd "M-u") 'backward-up-list)
 
 (defun meow-setup ()
@@ -961,6 +961,8 @@ Version 2016-11-22"
 
 (use-package forge :after magit)
 
+(use-package ghub)
+
 (use-package closql)
 
 (setq auth-sources '("~/.authinfo"))
@@ -1327,6 +1329,7 @@ The completion candidates include the Git status of each file."
     ("idu" "i dont understand")
     ("sen" "subtle elegant synonym of ")
     ("cc" "can you help me with a commit message without the body ? give altenartives, this time in spanish please, dont use ascents")
+    ("cmm" "can you help me with merge description use bullet points for each relevant change, this time in spanish, dont use ascents, keep the writhing simple and focused")
     ("gt" "can you help me with a gitlab merge request description focused and simple only description, this time in spanish please, dont use ascents")
     ("jas" "just asking")
     ("wt" "what do you think ?")))
@@ -1725,12 +1728,13 @@ This mode uses highlight-regexp overlays instead of font-lock."
   :bind (:map elfeed-show-mode-map
               ("%" . elfeed-webkit-toggle)))
 
-(setq org-tag-alist '((:startgroup . nil)
-                      ("@task" . ?t)
-                      (:endgroup . nil)
-                      ("urgent" . ?u)
-                      ("@doc" . ?d)
-		      ))
+(setq org-tag-alist
+      '((:startgroup . nil)
+        ("@task" . ?t)
+        (:endgroup . nil)
+        ("urgent" . ?u)
+        ("@doc" . ?d)
+        ("@core" . ?c)))
 
 (setq org-capture-templates
       '(("e" "Emacs Todo" entry
