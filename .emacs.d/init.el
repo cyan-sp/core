@@ -105,6 +105,9 @@
 
 (setq claude-code-terminal-backend 'vterm)
 
+(use-package elisp-demos)
+(advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
+
 (use-package vertico
   :straight t
   :bind (:map vertico-map
@@ -222,10 +225,10 @@
 
 (setq modus-themes-bold-constructs nil)
 
-;; (modus-themes-load-theme 'modus-operandi)
-(use-package ef-themes)
+(modus-themes-load-theme 'modus-operandi-deuteranopia)
+;; (use-package ef-themes)
 
-(ef-themes-load-theme 'ef-light)
+;; (ef-themes-load-theme 'ef-light)
 (use-package minions)
 
 (minions-mode)
@@ -407,7 +410,7 @@ Version 2016-11-22"
  '("a" . org-agenda)
  '("f" . project-find-file)
  '("s" . consult-grep)
- '("t" . claude-code-toggle))
+ '("t" . claude-code-ide-toggle))
 
 (defun indent-whole-buffer ()
   "Indent the entire buffer without affecting point or mark."
@@ -424,7 +427,7 @@ Version 2016-11-22"
     (c-indent-region start end)
     (replace-regexp "[  ]+$" "" nil start end))) ;// uses literal space and tab chars
 
-(setq-default show-trailing-whitespace t)
+(setq-default show-trailing-whitespace nil)
 (setq whitespace-display-mappings '((space-mark 32 [?·])))
 ;; (setq whitespace-style '(space-mark))
 ;; (setq whitespace-display-mappings '((space-mark 32 [183] [46])))
@@ -467,6 +470,12 @@ Version 2016-11-22"
     (interactive)
     (let ((command "docker exec -it inew-dev-3307 mysql -u root -ptoast inew_connections"))
       (async-shell-command command "*MySQL-inew*")))
+
+(defun mongo-inew ()                         ;
+  "Open MongoDB console in auth mongo container"
+  (interactive)
+  (let ((command "docker exec -it mongo-auth-3 mongo --username root --password luis1234 --authenticationDatabase admin inew_connections"))
+    (async-shell-command command "*MongoDB-auth*")))
 
 (defun clean-whitespace-region (start end)
   "Untabifies, removes trailing whitespace, and re-indents the region"
@@ -524,6 +533,19 @@ Version 2016-11-22"
   (cider-mode . company-mode)
   :bind (:map company-active-map
               ("C-i" . company-complete-selection)))
+
+(setq whisper--ffmpeg-input-device "RDPSource")
+
+(use-package whisper
+  :straight (:type git :host github :repo "natrys/whisper.el")
+  :load-path "path/to/whisper.el"
+  :bind ("C-c i" . whisper-run)
+  :config
+  (setq whisper-install-directory "/tmp/"
+        whisper-model "base"
+        whisper-language "en"
+        whisper-translate nil
+        whisper-use-threads (/ (num-processors) 2)))
 
 (use-package treemacs)
 
@@ -1332,7 +1354,9 @@ The completion candidates include the Git status of each file."
     ("cmm" "can you help me with merge description use bullet points for each relevant change, this time in spanish, dont use ascents, keep the writhing simple and focused")
     ("gt" "can you help me with a gitlab merge request description focused and simple only description, this time in spanish please, dont use ascents")
     ("jas" "just asking")
-    ("wt" "what do you think ?")))
+    ("wt" "what do you think ?")
+    ("rc" "help me resolve this comment of reviewer")
+))
 
 (setq-default abbrev-mode t)
 ;; (use-package yasnippet
@@ -1497,7 +1521,7 @@ DIRECTION should be 'forward or 'backward."
           "http://gigasquidsoftware.com/atom.xml"
           "https://studio.tymoon.eu/api/studio/gallery/atom?tag&user=shinmera"
           ;; "https://tumblr.shinmera.com/rss"
-	  "https://www.reddit.com/r/menitrust.rss"
+	  ;; "https://www.reddit.com/r/menitrust.rss"
 	  "https://xkcd.com/atom.xml"
           "https://shaarli.lain.li/feed/atom?"
 	  "https://endlessparentheses.com/atom.xml"
@@ -1733,8 +1757,11 @@ This mode uses highlight-regexp overlays instead of font-lock."
         ("@task" . ?t)
         (:endgroup . nil)
         ("urgent" . ?u)
-        ("@doc" . ?d)
-        ("@core" . ?c)))
+        ("doc" . ?d)
+        ("core" . ?c)
+        ("計画" . ?p)
+        ("@esim" . ?e)
+        ("@inew" . ?i)))
 
 (setq org-capture-templates
       '(("e" "Emacs Todo" entry
