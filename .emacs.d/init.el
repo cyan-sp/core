@@ -9,10 +9,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default nil :family "victor mono" :weight 'normal    :height 125)
-(set-face-attribute 'variable-pitch nil :family "victor mono" :weight 'normal    :height 125)
-
-(setq custom-file (concat user-emacs-directory "to-be-dumped.el")) ;; Dump custom-set-variables
+(set-face-attribute 'default nil :family "ubuntu mono" :weight 'normal    :height 130)
+(set-face-attribute 'variable-pitch nil :family "ubuntu mono" :weight 'normal    :height 120)
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -96,6 +94,14 @@
   (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
   (monet-mode 1)
   (claude-code-mode))
+
+(setq claude-code-ide-window-side 'bottom)
+
+(use-package claude-code-ide
+  :straight (:type git :host github :repo "manzaltu/claude-code-ide.el")
+  ;; :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
+  :config
+  (claude-code-ide-emacs-tools-setup))
 
 (add-hook 'claude-code-process-environment-functions #'monet-start-server-function) ; i think it is not neccessary
 
@@ -250,7 +256,12 @@
 (setq recentf-max-menu-items 25)
 (setq recentf-max-saved-items 25)
 (run-at-time nil (* 5 60) 'recentf-save-list)
-(global-set-key "\C-x\ \C-r" 'recentf-open-files) ;; (Note: Emacs records file names. Therefore, if you move or rename a file outside of Emacs, it won't automatically update the list. You'll have to open the renamed file with the normal CTRL-X CTRL-F method.)
+(global-set-key "\C-x\ \C-r" 'cy/fido-recentf)
+
+(defun cy/fido-recentf ()
+  (interactive)
+  (find-file (completing-read "Recent file: " recentf-list nil t nil 'recentf-list)))
+
 
 (use-package expand-region :ensure t)
 (global-set-key (kbd "C-;") 'er/expand-region)
@@ -490,10 +501,10 @@ Version 2016-11-22"
   (interactive)
   (clean-whitespace-region (point-min) (point-max)))
 
-(defun groovy-before-save-hook ()
-  "Clean whitespace before saving Groovy files"
-  (when (eq major-mode 'groovy-mode)
-    (clean-whitespace-buffer)))
+;; (defun groovy-before-save-hook ()
+;;   "Clean whitespace before saving Groovy files"
+;;   (when (eq major-mode 'groovy-mode)
+;;     (clean-whitespace-buffer)))
 
 ;; (add-hook 'before-save-hook 'groovy-before-save-hook)
 
@@ -871,7 +882,7 @@ Version 2016-11-22"
   :bind (;; ("C-c n l" . org-roam-buffer-toggle)
          ("C-c n n" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
-	 ("C-c n t" . org-roam-dailies-find-today)
+         ("C-c n t" . org-roam-dailies-find-today-with-side-tree)
 	 ("C-c n c" . org-capture)
          ;; ("C-c n i" . org-roam-node-insert)
          ;; ("C-c n c" . org-roam-capture)
@@ -1142,7 +1153,7 @@ The completion candidates include the Git status of each file."
 (use-package org
   :defer t
   :hook
-  (org-mode . efs/org-mode-setup)
+  ;; (org-mode . efs/org-mode-setup)
   :custom
   (org-return-follows-link t)
   (org-confirm-babel-evaluate nil))
@@ -1172,8 +1183,8 @@ The completion candidates include the Git status of each file."
 
 (setq org-babel-python-command "python3")
 
-(defun efs/org-mode-setup ()
-  (org-modern-mode 1))
+;; (defun efs/org-mode-setup ()
+;;   (org-modern-mode 1))
 
 (use-package org-mem)
 
@@ -1197,7 +1208,7 @@ The completion candidates include the Git status of each file."
 (setq org-agenda-files nil)
 (add-hook 'org-mem-post-full-scan-functions #'my-set-agenda-files)
 
-(defvar my-org-heading-timestamp-mode nil
+(defvar my-org-heading-timestamp-mode t
   "When non-nil, automatically insert timestamp when creating new org headings.")
 
 (defun my-org-heading-timestamp-mode ()
@@ -1224,18 +1235,6 @@ The completion candidates include the Git status of each file."
 (use-package consult)			;consult line
 
 (setq x-underline-at-descent-line t)
-
-(use-package org-modern
-  :init
-  (setq org-modern-list nil)		; lists like +, -
-  (setq org-modern-checkbox nil)
-  (setq org-modern-hide-stars nil)
-  (setq org-modern-table nil)
-  (setq org-modern-star nil)
-  (setq org-modern-timestamp nil)
-  :ensure t)
-
-(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 
 (defun now ()
   "Insert string for the current time formatted like '2:34 PM'."
@@ -1356,6 +1355,8 @@ The completion candidates include the Git status of each file."
     ("jas" "just asking")
     ("wt" "what do you think ?")
     ("rc" "help me resolve this comment of reviewer")
+    ("qti" "question the implementation before trying to do the edit please")
+    ("rei" "例")
 ))
 
 (setq-default abbrev-mode t)
@@ -1521,7 +1522,6 @@ DIRECTION should be 'forward or 'backward."
           "http://gigasquidsoftware.com/atom.xml"
           "https://studio.tymoon.eu/api/studio/gallery/atom?tag&user=shinmera"
           ;; "https://tumblr.shinmera.com/rss"
-	  ;; "https://www.reddit.com/r/menitrust.rss"
 	  "https://xkcd.com/atom.xml"
           "https://shaarli.lain.li/feed/atom?"
 	  "https://endlessparentheses.com/atom.xml"
