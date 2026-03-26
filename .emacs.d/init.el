@@ -1177,7 +1177,9 @@ The completion candidates include the Git status of each file."
  '((sql . t)
    (shell . t)
    (http . t)
-   (python . t))))
+   (python . t)
+   (mermaid . t)
+)))
 
 (setq org-babel-python-command "python3")
 
@@ -1236,8 +1238,8 @@ The completion candidates include the Git status of each file."
 
 (defun now ()
   "Insert string for the current time formatted like '2:34 PM'."
-  (interactive)                 ; permit invocation in minibuffer
-  (insert (format-time-string "[%-H:%M]")))
+  (interactive)
+  (insert (format-time-string "<%Y-%m-%d %a %H:%M>")))
 
 (show-paren-mode +1)
 (electric-pair-mode 1)
@@ -1347,13 +1349,14 @@ The completion candidates include the Git status of each file."
     ("iia" "if you think you need more info plase ask" nil :count 0)
     ("idu" "i dont understand")
     ("sen" "subtle elegant synonym of ")
-    ("cc" "can you help me with a commit message without the body ? give altenartives, this time in spanish please, dont use ascents")
+    ("cc" "can you help me with a commit message without the body ? give altenartives, this time in spanish please, dont use ascents, do you think im ready to commit ?")
     ("cmm" "can you help me with merge description use bullet points for each relevant change, this time in spanish, dont use ascents, keep the writhing simple and focused")
     ("gt" "can you help me with a gitlab merge request description focused and simple only description, this time in spanish please, dont use ascents")
     ("jas" "just asking")
     ("wt" "what do you think ?")
     ("rc" "help me resolve this comment of reviewer")
     ("qti" "question the implementation before trying to do the edit please")
+    ("plask" "please ask the question if any")
     ("rei" "例")
 ))
 
