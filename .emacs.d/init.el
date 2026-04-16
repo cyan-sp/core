@@ -488,6 +488,20 @@ Version 2016-11-22"
   (let ((command "docker exec -it mongo-auth-3 mongo --username root --password luis1234 --authenticationDatabase admin inew_connections"))
     (async-shell-command command "*MongoDB-auth*")))
 
+(defvar my-sql-connections
+  '((pagosv2 . ":engine mysql :dbuser cristhian.gutierrez :dbhost 198.50.124.11 :dbport 3306 :database pagosv2 :dbpassword FrXxXRV@HiLR@wZfdTiFweY4h&")
+    (esimProd . ":engine mysql :dbuser cristhian.gutierrez :dbhost 10.11.10.64 :dbport 3306 :database esim :dbpassword uKxxpDvt3f@kHrA&t@tMqzDb7d")
+    (esimQA . ":engine mysql :dbuser christian.gutierrez :dbhost 10.11.10.103 :dbport 3306 :database esim :dbpassword Z3oW~#yQEbZk2x3L&yK5")
+    (esimLocal . ":engine mysql :dbuser root :dbhost 127.0.0.1 :dbport 3306 :database esim_db :dbpassword toast")
+    (pospago . ":engine mssql :dbuser christian.gutierrez :dbhost 10.11.10.134,1434 :database pospago :cmdline \"-C\"")
+    (pospago-local . ":engine mssql :dbuser SA :dbhost localhost,1433 :database pospago :cmdline \"-C\"")))
+
+(defun my-sql-insert-connection (name)
+  "Insert connection args into the current #+begin_src sql block."
+  (interactive (list (intern (completing-read "Connection: " (mapcar #'car my-sql-connections)))))
+  (let ((args (alist-get name my-sql-connections)))
+    (insert " " args)))
+
 (defun clean-whitespace-region (start end)
   "Untabifies, removes trailing whitespace, and re-indents the region"
   (interactive "r")
@@ -948,6 +962,7 @@ Version 2016-11-22"
 	outline-forward-same-level
 	outline-next-visible-heading
 	outline-previous-visible-heading
+        compile-goto-error
 	outline-up-heading))
 
 (setq pulsar-pulse-on-window-change t)
