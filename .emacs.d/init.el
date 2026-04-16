@@ -300,6 +300,9 @@ Version 2016-11-22"
 
 (use-package multiple-cursors)
 
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+
 (define-key meow-normal-state-keymap (kbd "M-n") #'forward-whitespace)
 (define-key meow-insert-state-keymap (kbd "M-n") #'forward-whitespace)
 (global-set-key (kbd "M-o") 'meow-to-block)
@@ -530,7 +533,13 @@ Version 2016-11-22"
 
 (setq-default indent-tabs-mode nil)	;https://www.reddit.com/r/emacs/comments/1oj7zhi/tabs_with_four_space_indent/
 
-(use-package eglot)
+;; Use built-in versions to avoid conflicts of eglot not compiling
+(use-package eglot
+  :straight nil
+  :config
+  ;; Configure basedpyright for Python
+  (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode) . ("basedpyright-langserver" "--stdio"))))
 
 (use-package company
   :after lsp-mode
@@ -1039,22 +1048,6 @@ Version 2016-11-22"
         (message "Opening Meld with project: %s" root))
     (message "Not in a project. Use M-x meld-directory instead.")))
 
-(use-package blamer
-  :straight (:host github :repo "artawower/blamer.el")
-  :bind (("s-i" . blamer-show-posframe-commit-info))
-  :custom
-  (blamer-idle-time 0.3)
-  (blamer-min-offset 70)
-  (blamer-type 'echo-area)
-  (blamer-show-avatar-p t)
-  :custom-face
-  (blamer-face ((t :foreground "#7a88cf"
-                    :background nil
-                    :height 140
-                    :italic t)))
-  :config
-  (global-blamer-mode 1))
-
 (defun emacs-solo/switch-git-status-buffer ()
   "Parse git status from an expanded path and switch to a file.
 The completion candidates include the Git status of each file."
@@ -1118,16 +1111,6 @@ The completion candidates include the Git status of each file."
 
 (global-set-key (kbd "C-x u") 'winner-undo)
 
-(use-package nyan-mode)
-
-(setq nyan-bar-length 16)
-
-(nyan-mode)
-
-(nyan-start-animation)
-
-(setq nyan-wavy-trail t)
-
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
 		term-mode-hook
@@ -1150,7 +1133,7 @@ The completion candidates include the Git status of each file."
 
 (use-package org
   :defer t
-  :hook
+  ;; :hook
   ;; (org-mode . efs/org-mode-setup)
   :custom
   (org-return-follows-link t)
@@ -1323,6 +1306,7 @@ The completion candidates include the Git status of each file."
 ;; (global-smudge-remote-mode)
 
 (use-package vterm)
+
 (with-eval-after-load "esh-opt"
   (autoload 'epe-theme-lambda "eshell-prompt-extras")
   (setq eshell-highlight-prompt nil
