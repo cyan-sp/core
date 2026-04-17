@@ -1158,8 +1158,6 @@ The completion candidates include the Git status of each file."
 
 (use-package orgit)
 
-(define-key groovy-mode-map (kbd "C-x v t") 'blamer-show-posframe-commit-info)
-
 (with-eval-after-load 'org
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -1345,8 +1343,9 @@ The completion candidates include the Git status of each file."
     ("jas" "just asking")
     ("wt" "what do you think ?")
     ("rc" "help me resolve this comment of reviewer")
-    ("qti" "question the implementation before trying to do the edit please")
+    ("qti" "question the implementation if any question before trying to do the edit please")
     ("plask" "please ask the question if any")
+    ("uorg" "use src diff tables and in general org mode capatabilites")
     ("rei" "例")
 ))
 
