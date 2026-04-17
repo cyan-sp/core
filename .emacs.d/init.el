@@ -176,24 +176,15 @@
    completion-category-defaults nil
    completion-category-overrides '((file (styles partial-completion)))))
 
-(use-package nano-theme
-  :straight (:type git :host github :repo "cyan-sp/nano-theme" :branch "master"))
-
-(load-theme 'nano-light t)
-(load-file "~/.core/.emacs.d/nano-theme/nano-theme-support.el")
-(load-theme 'nano-light t)
-
 (use-package modus-themes :ensure t)
 
 ;; As above, but with a purple style
 (setq modus-themes-common-palette-overrides
-      '((comment yellow-faint)
-	(bg-prose-block-delimiter  unspecified)  ; source code block (top face)
+      '((bg-prose-block-delimiter  unspecified)  ; source code block (top face)
 	(bg-prose-block-contents   unspecified) ; sourec code block (background face)
 	(fg-region unspecified)		; keep syntax highlight when region
 
 	(builtin magenta)
-        (comment yellow-faint)
         (constant red-cooler)
         (fnname magenta-warmer)
         (keyword magenta-cooler)
