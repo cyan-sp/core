@@ -1203,10 +1203,33 @@ The completion candidates include the Git status of each file."
 
 (use-package org-mem)
 
+(setq org-directory "~/roam")
 (setq org-mem-watch-dirs '("~/roam"))
 (setq org-mem-do-sync-with-org-id t)
 (org-mem-updater-mode)
 (org-mem-all-entries)
+
+(use-package olivetti)
+
+(defun org-agenda-open-hook ()
+  "Hook to be run when org-agenda is opened"
+  (olivetti-mode)
+  (setq-local olivetti-body-width 0.9)  ; Use 90% of window width
+  (delete-other-windows))
+
+(add-hook 'org-agenda-mode-hook 'org-agenda-open-hook)
+
+(defun org-agenda-goto-with-side-tree ()
+  "Go to agenda entry and toggle org-side-tree"
+  (interactive)
+  (org-agenda-switch-to)
+  (save-selected-window
+    (org-back-to-heading)
+    (forward-line 1)
+    (org-side-tree)))
+
+(with-eval-after-load 'org-agenda
+  (define-key org-agenda-mode-map (kbd "RET") 'org-agenda-goto-with-side-tree))
 
 (defun my-set-agenda-files (&rest _)
   (setq org-agenda-files
