@@ -20,8 +20,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'variable-pitch  nil :family "IBM Plex Sans Devanagari" :weight 'normal    :height 105)
-(set-face-attribute 'default nil :family "PlemolJP Console NF" :weight 'normal    :height 105)
+(set-face-attribute 'default  nil :family "hasklig" :weight 'normal    :height 90)
+(set-face-attribute 'variable-pitch  nil :family "hasklig" :weight 'normal    :height 90)
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -93,10 +93,10 @@
 (use-package multi-vterm :ensure t)
 
 (setq claude-code-ide-window-side 'bottom)
+(setq claude-code-ide-terminal-backend 'vterm)
 
 (use-package claude-code-ide
   :straight (:type git :host github :repo "manzaltu/claude-code-ide.el")
-  ;; :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
   :config
   (claude-code-ide-emacs-tools-setup))
 
@@ -228,6 +228,20 @@
 (minions-mode)
 
 (use-package svg-lib)
+
+(use-package mini-echo)
+(setq mini-echo-right-padding 3)
+
+(with-eval-after-load 'mini-echo
+  (set-face-attribute 'mini-echo-green   nil :foreground (modus-themes-get-color-value 'green-cooler))
+  (set-face-attribute 'mini-echo-yellow  nil :foreground (modus-themes-get-color-value 'yellow-cooler))
+  (set-face-attribute 'mini-echo-blue    nil :foreground (modus-themes-get-color-value 'blue-cooler))
+  (set-face-attribute 'mini-echo-red     nil :foreground (modus-themes-get-color-value 'red-cooler))
+  (set-face-attribute 'mini-echo-magenta nil :foreground (modus-themes-get-color-value 'magenta-cooler))
+  (set-face-attribute 'mini-echo-cyan    nil :foreground (modus-themes-get-color-value 'cyan-cooler))
+  (set-face-attribute 'mini-echo-gray    nil :foreground (modus-themes-get-color-value 'fg-dim)))
+
+(mini-echo-mode)
 
 (use-package meow
   :custom
@@ -436,6 +450,12 @@ Version 2016-11-22"
 ;; (setq whitespace-space 'cfw:face-disable) ; <- insert the face
 (setq whitespace-style '(face spaces space-mark))
 
+(use-package gdscript-mode
+  :hook (gdscript-mode . eglot-ensure)
+  :custom (gdscript-eglot-version 3))
+
+(setq gdscript-godot-executable "~/Godot_v4.6.2-stable_linux.x86_64/Godot_v4.6.2-stable_linux.x86_64")
+
 (use-package groovy-mode :ensure t)
 
   (add-hook 'groovy-mode-hook
@@ -520,9 +540,8 @@ Version 2016-11-22"
 (use-package fennel-mode)
 
 (use-package lua-mode)
-
-(use-package love2d-fennel
-  :straight (:type git :host codeberg :repo "alexjgriffith/love2d-fennel.el" ))
+;; (use-package love2d-fennel
+;;   :straight (:type git :host codeberg :repo "alexjgriffith/love2d-fennel.el" ))
 
 (use-package flycheck
   :ensure t
