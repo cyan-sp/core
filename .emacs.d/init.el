@@ -450,6 +450,8 @@ Version 2016-11-22"
 ;; (setq whitespace-space 'cfw:face-disable) ; <- insert the face
 (setq whitespace-style '(face spaces space-mark))
 
+;; programming languages
+
 (use-package gdscript-mode
   :hook (gdscript-mode . eglot-ensure)
   :custom (gdscript-eglot-version 3))
@@ -620,6 +622,11 @@ Version 2016-11-22"
   :straight t
   :config
   (pyvenv-mode 1))
+
+(use-package python-black
+  :demand t
+  :after python
+  :hook (python-mode . python-black-on-save-mode-enable-dwim))
 
 (add-to-list 'load-path "~/.core/.emacs.d/elisp/")
 
@@ -986,8 +993,12 @@ Version 2016-11-22"
 
 (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
 
-(use-package magit  :custom  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ;fulllscreent
+(use-package magit  :custom  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1) ; fulllscreen
   ) 
+
+(use-package magit-pre-commit
+  :straight (:host github :repo "DamianB-BitFlipper/magit-pre-commit.el")
+  :after magit)
 
 ;; (setq smerge-command-prefix (kbd "C-c v"))
 (eval-after-load 'smerge-mode
@@ -1183,9 +1194,7 @@ The completion candidates include the Git status of each file."
  '((sql . t)
    (shell . t)
    (http . t)
-   (python . t)
-   (mermaid . t)
-)))
+   (python . t))))
 
 (setq org-babel-python-command "python3")
 
@@ -1761,7 +1770,6 @@ This mode uses highlight-regexp overlays instead of font-lock."
         ("urgent" . ?u)
         ("doc" . ?d)
         ("core" . ?c)
-        ("計画" . ?p)
         ("@esim" . ?e)
         ("@inew" . ?i)))
 
