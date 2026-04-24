@@ -1586,6 +1586,16 @@ DIRECTION should be 'forward or 'backward."
 (use-package org-pdftools
   :hook (org-mode . org-pdftools-setup-link))
 
+(use-package nethack
+  :straight (:type git :host github :repo "Feyorsh/nethack-el")
+  :config
+  (define-key nethack-map-mode-map [left]  #'nethack-command-west)
+  (define-key nethack-map-mode-map [right] #'nethack-command-east)
+  (define-key nethack-map-mode-map [up]    #'nethack-command-north)
+  (define-key nethack-map-mode-map [down]  #'nethack-command-south)
+  (load "~/.emacs.d/nethack-keys-colemak-dh.el")
+  (add-hook 'nethack-map-mode-hook (lambda () (meow-mode -1) (puni-mode -1))))
+
 (use-package org-remark
   :bind (;; :bind keyword also implicitly defers org-remark itself.
          ;; Keybindings before :map is set for global-map. Adjust the keybinds
