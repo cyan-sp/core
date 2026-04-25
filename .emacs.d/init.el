@@ -1208,6 +1208,62 @@ The completion candidates include the Git status of each file."
 (setq org-mem-do-sync-with-org-id t)
 (org-mem-updater-mode)
 (org-mem-all-entries)
+;; org extras
+
+(defun cy/org-table-copy-column ()
+  "Prompt to select a column from the current org table and copy its values."
+  (interactive)
+  (unless (org-at-table-p) (user-error "Not in an org table"))
+  (let* ((headers
+          (save-excursion
+            (goto-char (org-table-begin))
+            (while (org-at-table-hline-p) (forward-line 1))
+            (mapcar #'string-trim
+                    (split-string (org-table-get-field) nil t))))
+         (headers
+          (save-excursion
+            (goto-char (org-table-begin))
+            (while (org-at-table-hline-p) (forward-line 1))
+            (let ((fields '()) (c 1))
+              (while (not (string-empty-p (string-trim (or (org-table-get-field c) ""))))
+                (push (cons (string-trim (org-table-get-field c)) c) fields)
+                (setq c (1+ c)))
+              (nreverse fields))))
+         (choice (completing-read "Column: " (mapcar #'car headers) nil t))
+         (col (cdr (assoc choice headers)))
+         (header-skipped nil)
+         (values '()))
+    (save-excursion
+      (goto-char (org-table-begin))
+      (while (org-at-table-p)
+        (cond
+         ((org-at-table-hline-p) nil)
+         ((not header-skipped) (setq header-skipped t))
+         (t (let ((val (string-trim (org-table-get-field col))))
+              (unless (string-empty-p val)
+                (push (format "'%s'" val) values)))))
+        (forward-line 1)))
+    (let ((result (mapconcat #'identity (nreverse values) "\n")))
+      (kill-new result)
+      (message "Copied %d values from \"%s\"" (length values) choice))))
+ 
+(defun org-roam-dailies-find-today-with-side-tree ()
+  "Find today's daily note and toggle org-side-tree at current heading"
+  (interactive)
+  ;; (org-roam-dailies-find-today)
+  (org-roam-dailies-goto-today)
+  (save-excursion
+    (goto-char (point-min))
+    (if (re-search-forward "^\\*+ " nil t)
+        ;; Found headings
+        (progn
+          (save-selected-window
+            (when (org-at-heading-p)
+              (org-back-to-heading)
+              (forward-line 1))
+            (org-side-tree)))
+      ;; No headings found
+      (message "No headings found in today's daily note"))))
 
 (use-package olivetti)
 
