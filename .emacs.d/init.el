@@ -20,8 +20,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default  nil :family "hasklig" :weight 'normal    :height 90)
-(set-face-attribute 'variable-pitch  nil :family "hasklig" :weight 'normal    :height 90)
+(set-face-attribute 'default  nil :family "hasklig" :weight 'normal    :height 80)
+(set-face-attribute 'variable-pitch  nil :family "hasklig" :weight 'normal    :height 80)
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -86,6 +86,11 @@
 
 (setq use-dialog-box nil)		; dont use gui boxes
 
+
+(setq package-review-policy t
+      package-review-diff-command '("git" "diff" "--no-index" "--color=never" "--diff-filter=d"))
+;; https://old.reddit.com/r/emacs/comments/1rowm5i/first_hacked_emacs_package/
+
 (straight-use-package '(monet :type git :host github :repo "stevemolitor/monet"))
 
 (use-package vterm :ensure t)
@@ -139,7 +144,6 @@
   :init
   ;; Optionally replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
-
   ;; Show the Embark target at point via Eldoc. You may adjust the
   ;; Eldoc strategy, if you want to see the documentation from
   ;; multiple providers. Beware that using this can be a little
@@ -263,7 +267,6 @@
 (defun cy/fido-recentf ()
   (interactive)
   (find-file (completing-read "Recent file: " recentf-list nil t nil 'recentf-list)))
-
 
 (use-package expand-region :ensure t)
 (global-set-key (kbd "C-;") 'er/expand-region)
@@ -542,8 +545,8 @@ Version 2016-11-22"
 (use-package fennel-mode)
 
 (use-package lua-mode)
-;; (use-package love2d-fennel
-;;   :straight (:type git :host codeberg :repo "alexjgriffith/love2d-fennel.el" ))
+(use-package love2d-fennel
+  :straight (:type git :host codeberg :repo "alexjgriffith/love2d-fennel.el" ))
 
 (use-package flycheck
   :ensure t
@@ -1194,7 +1197,9 @@ The completion candidates include the Git status of each file."
  '((sql . t)
    (shell . t)
    (http . t)
-   (python . t))))
+   (python . t)
+   (groovy . t)
+)))
 
 (setq org-babel-python-command "python3")
 
@@ -1612,6 +1617,7 @@ DIRECTION should be 'forward or 'backward."
           "https://shaarli.lain.li/feed/atom?"
 	  "https://www.cyan.sh/blog/feed.xml"
           "https://flandrew.srht.site/listful/feed/all.xml"
+          "https://scheatkode.com/rss.xml"
           ;; https://lite.duckduckgo.com/lite
 )))
 
