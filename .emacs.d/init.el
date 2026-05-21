@@ -20,8 +20,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default  nil :family "hasklig" :weight 'normal    :height 80)
-(set-face-attribute 'variable-pitch  nil :family "hasklig" :weight 'normal    :height 80)
+(set-face-attribute 'default  nil :family "hasklig" :weight 'normal    :height 90)
+(set-face-attribute 'variable-pitch  nil :family "hasklig" :weight 'normal    :height 90)
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -510,7 +510,9 @@ Version 2016-11-22"
     (esimQA . ":engine mysql :dbuser christian.gutierrez :dbhost 10.11.10.103 :dbport 3306 :database esim :dbpassword Z3oW~#yQEbZk2x3L&yK5")
     (esimLocal . ":engine mysql :dbuser root :dbhost 127.0.0.1 :dbport 3306 :database esim_db :dbpassword toast")
     (pospago . ":engine mssql :dbuser christian.gutierrez :dbhost 10.11.10.134,1434 :database pospago :cmdline \"-C\"")
-    (pospago-local . ":engine mssql :dbuser SA :dbhost localhost,1433 :database pospago :cmdline \"-C\"")))
+    (pospago-local . ":engine mssql :dbuser SA :dbhost localhost,1433 :database pospago :cmdline \"-C\"")
+    (lapisLocal . ":engine postgres :dbuser cyan :dbhost 127.0.0.1 :dbport 5432 :database lapis :dbpassword toast")
+    (httpOnly . ":engine mysql :dbuser root :dbhost 127.0.0.1 :dbport 3306 :database httponly :dbpassword toast")))
 
 (defun my-sql-insert-connection (name)
   "Insert connection args into the current #+begin_src sql block."
@@ -577,8 +579,11 @@ Version 2016-11-22"
   (ess-r-mode . company-mode)
   (sql-mode . company-mode)
   (cider-mode . company-mode)
+  (org-mode . company-mode)
   :bind (:map company-active-map
               ("C-i" . company-complete-selection)))
+
+(completion-preview-mode)
 
 (setq whisper--ffmpeg-input-device "RDPSource")
 
@@ -599,12 +604,24 @@ Version 2016-11-22"
 
 (add-hook 'rust-mode-hook 'lsp)
 
+(use-package emmet-mode
+  :straight t
+  :hook (etlua-mode html-mode web-mode)
+  :bind (:map emmet-mode-keymap
+         ("C-j" . emmet-expand-line))
+  :config
+  (define-key facemenu-keymap (kbd "M-o") nil))
+
 (use-package yasnippet
   :config
   (setq yas-snippet-dirs '("~/.emacs.d/snippets/"))
   (setq yas-triggers-in-field t)
   (yas-global-mode 1)
   (yas-reload-all))
+
+(use-package consult-yasnippet
+  :straight t
+  :bind ("M-+" . consult-yasnippet))
 
 (use-package hide-lines)
 
