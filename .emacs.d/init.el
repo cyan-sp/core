@@ -1,5 +1,8 @@
 ;;; init.el ---  -*- lexical-binding: t -*-
 
+(setq server-socket-dir (expand-file-name "server" user-emacs-directory))
+(server-start)                          ;; shiori integration
+
 ;;              .mmmmmmmmmmmmmm.                   .cccccccc!                .(.
 ;;  .+eeeee.   .??:   +m<   <mm.    .aaaaaaaa.    ccC!           .+sssss{    (!!
 ;; .ee:        .mm:   +mm   .mm_   .aa>   (aaA    cCC           .ss>         1!:
@@ -20,8 +23,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default  nil :family "hasklig" :weight 'normal    :height 90)
-(set-face-attribute 'variable-pitch  nil :family "hasklig" :weight 'normal    :height 90)
+(set-face-attribute 'default  nil :family "hasklig" :weight 'normal    :height 100)
+(set-face-attribute 'variable-pitch  nil :family "IBM Plex Sans Devanagari" :weight 'normal    :height 100)
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -165,6 +168,13 @@
   ;;                nil
   ;;                (window-parameters (mode-line-format . none))))
   )
+
+(defun cy/open-in-qimgv (file)
+  "Open FILE in qimgv."
+  (start-process "qimgv" nil "qimgv" (expand-file-name file)))
+
+(with-eval-after-load 'embark
+  (define-key embark-file-map (kbd "I") #'cy/open-in-qimgv))
 
 ;; Consult users will also want the embark-consult package.
 (use-package embark-consult
@@ -429,7 +439,8 @@ Version 2016-11-22"
  '("a" . org-agenda)
  '("f" . project-find-file)
  '("s" . consult-grep)
- '("t" . claude-code-ide-toggle))
+ ;; '("t" . claude-code-ide-toggle)
+ )
 
 (defun indent-whole-buffer ()
   "Indent the entire buffer without affecting point or mark."
@@ -461,10 +472,9 @@ Version 2016-11-22"
 
 (setq gdscript-godot-executable "~/Godot_v4.6.2-stable_linux.x86_64/Godot_v4.6.2-stable_linux.x86_64")
 
-(use-package groovy-mode :ensure t)
-
-  (add-hook 'groovy-mode-hook
-            (lambda () (setq truncate-lines t)))
+(use-package groovy-mode
+  :ensure t
+  :hook (groovy-mode . (lambda () (setq truncate-lines t))))
 
 (defvar grails-logs-hidden nil
   "Track whether Grails logs are currently hidden")
@@ -544,7 +554,8 @@ Version 2016-11-22"
 
 (use-package cider)
 
-(use-package fennel-mode)
+(use-package fennel-mode
+  :hook (fennel-mode . eglot-ensure))
 
 (use-package lua-mode)
 (use-package love2d-fennel
@@ -580,8 +591,12 @@ Version 2016-11-22"
   (sql-mode . company-mode)
   (cider-mode . company-mode)
   (org-mode . company-mode)
+  (fennel-mode . company-mode)
+  (groovy-mode . company-mode)
   :bind (:map company-active-map
-              ("C-i" . company-complete-selection)))
+              ("C-i" . company-complete-selection))
+  :config
+  (setq company-minimum-prefix-length 3))
 
 (completion-preview-mode)
 
@@ -684,7 +699,7 @@ Version 2016-11-22"
   :ensure nil  ; Built-in package
   :init
   ;; Enable tab-bar-mode
-  (tab-bar-mode 1)
+  ;; (tab-bar-mode 1)
   
   :config
   ;; Basic appearance settings
