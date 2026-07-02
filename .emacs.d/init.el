@@ -983,13 +983,11 @@ Version 2016-11-22"
          ("C-M-`" . popper-toggle-type))
   :init
   (setq popper-reference-buffers
-        ;; '("\\*Messages\\*"
-        ;;   "Output\\*$"
-        ;;   "\\*Async Shell Command\\*"
-        ;;   help-mode
-        ;;   compilation-mode)
-
-	'("*slime-repl uv-python*" "*Flymake diagnostics for `main.rs'*"))
+        '("*slime-repl uv-python*"
+          "*Flymake diagnostics for `main.rs'*"
+          "\\*vterm.*\\*"
+          "\\*claude.*\\*")
+        popper-group-function #'popper-group-by-project)
   (popper-mode +1)
   (popper-echo-mode +1))                ; For echo area hints
 
@@ -1275,6 +1273,14 @@ The completion candidates include the Git status of each file."
 
 (use-package orgit)
 
+(use-package mermaid-mode :straight t)
+(with-eval-after-load 'org-src
+  (add-to-list 'org-src-lang-modes '("mermaid" . mermaid)))
+(use-package ob-mermaid
+  :straight t
+  :config
+  (setq ob-mermaid-cli-path "mmdc"))
+
 (with-eval-after-load 'org
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -1283,9 +1289,23 @@ The completion candidates include the Git status of each file."
    (http . t)
    (python . t)
    (groovy . t)
+   (mermaid . t)
+   (plantuml . t)
 )))
 
 (setq org-babel-python-command "python3")
+
+
+
+(use-package plantuml-mode
+  :straight t
+  :config
+  (setq plantuml-jar-path (expand-file-name "~/bin/plantuml-1.2026.5.jar")
+        plantuml-default-exec-mode 'jar))
+(with-eval-after-load 'org-src
+  (add-to-list 'org-src-lang-modes '("plantuml" . plantuml)))
+(setq org-plantuml-exec-mode 'jar
+      org-plantuml-jar-path (expand-file-name "~/bin/plantuml-1.2026.5.jar"))
 
 ;; (defun efs/org-mode-setup ()
 ;;   (org-modern-mode 1))
