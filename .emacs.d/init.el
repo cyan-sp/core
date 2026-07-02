@@ -2068,7 +2068,7 @@ Defaults to the current week.  With prefix arg, prompts for a date."
     (find-file pdf-file)))
 
 (load (expand-file-name "cy-bookmarks"      user-emacs-directory))
-(load (expand-file-name "cy-twitch-emotes" user-emacs-directory))
-(load (expand-file-name "cy-twitch-vods"   user-emacs-directory))
+(load (expand-file-name "cy-twitch-core"   user-emacs-directory))
+(load (expand-file-name "cy-twitch-vod-player" user-emacs-directory))
 (load (expand-file-name "cy-swanky"        user-emacs-directory))
 

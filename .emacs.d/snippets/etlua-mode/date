@@ -1,0 +1,4 @@
+# name: date
+# key: date
+# --
+<%= os.date("%Y-%m-%d", os.time()) %>

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: debug-variable
+# key: dbv
+# --
+println "\n(O.o) `(file-name-nondirectory (buffer-file-name))`::`(line-number-at-pos)` ${1:variable} \${${1:$(yas-text)}}\n"

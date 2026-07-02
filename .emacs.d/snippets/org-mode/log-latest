@@ -1,0 +1,19 @@
+# name: log-latest
+# key: log-latest
+# --
+** `(format-time-string "<%Y-%m-%d %a %H:%M>")` for latest logs - ${1:uuid}
+*** pagos
+#+begin_src elisp :results raw
+(concat
+ (cy/grep-log-to-tmp "${1:$(yas-text)}" "/mnt/opt/tomcat/logs/catalina.out" "paym156")
+ "\n"
+ (cy/grep-log-to-tmp "${1:$(yas-text)}" "/mnt/opt/tomcat/logs/catalina.out" "paym195"))
+#+end_src
+
+*** esim
+#+begin_src elisp :results raw
+(concat
+ (cy/grep-log-to-tmp "${1:$(yas-text)}" "/opt/tomcat/latest/logs/catalina.out" "esim62")
+ "\n"
+ (cy/grep-log-to-tmp "${1:$(yas-text)}" "/opt/tomcat/latest/logs/catalina.out" "esim63"))
+#+end_src

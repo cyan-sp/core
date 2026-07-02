@@ -1,6 +1,5 @@
 /.emacs.d/url/
 /.emacs.d/history
-/.emacs.d/pomm
 /.emacs.d/site-lisp/
 /.emacs.d/elpa/
 /.emacs.d/projects
@@ -12,7 +11,6 @@
 /.emacs.d/places
 /.emacs.d/tramp
 /.emacs.d/transient/
-/.emacs.d/workspace/
 /.emacs.d/bookmarks
 /.emacs.d/auto-save-list/
 /.emacs.d/.dap-breakpoints
@@ -21,3 +19,9 @@
 /.emacs.d/.org-id-locations
 /.emacs.d/eclipse.jdt.ls/
 /.emacs.d/logview-cache.extmap
+/.emacs.d/.cache/
+/.emacs.d/.pdf-view-restore
+/.emacs.d/org-roam.db
+/.emacs.d/tree-sitter/
+/.emacs.d/eyebrowse-restore/
+/.emacs.d/eln-cache/
