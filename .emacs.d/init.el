@@ -573,14 +573,91 @@ Version 2016-11-22"
     (esimLocal . ":engine mysql :dbuser root :dbhost 127.0.0.1 :dbport 3306 :database esim_db :dbpassword toast")
     (pospago . ":engine mssql :dbuser christian.gutierrez :dbhost 10.11.10.134,1434 :database pospago :cmdline \"-C\"")
     (pospago-local . ":engine mssql :dbuser SA :dbhost localhost,1433 :database pospago :cmdline \"-C\"")
+    (directions-local . ":engine mssql :dbuser SA :dbhost localhost,1433 :database directions :cmdline \"-C\"")
+    (esim-local-ms . ":engine mssql :dbuser SA :dbhost localhost,1433 :database esim :cmdline \"-C\"")
     (lapisLocal . ":engine postgres :dbuser cyan :dbhost 127.0.0.1 :dbport 5432 :database lapis :dbpassword toast")
     (httpOnly . ":engine mysql :dbuser root :dbhost 127.0.0.1 :dbport 3306 :database httponly :dbpassword toast")))
 
 (defun my-sql-insert-connection (name)
-  "Insert connection args into the current #+begin_src sql block."
+  "Insert a complete org-babel SQL src block for NAME."
   (interactive (list (intern (completing-read "Connection: " (mapcar #'car my-sql-connections)))))
   (let ((args (alist-get name my-sql-connections)))
-    (insert " " args)))
+    (insert (format "#+begin_src sql %s\n\n#+end_src" args))
+    (forward-line -1)))
+
+(setq sql-ms-program "sqlcmd"
+      sql-ms-options '("-w" "999" "-C"))
+
+(setq sql-connection-alist
+      '(;; MSSQL
+        (pospago-prod
+         (sql-product  'ms)
+         (sql-user     "christian.gutierrez")
+         (sql-server   "10.11.10.134,1434")
+         (sql-database "pospago")
+         (sql-ms-options '("-w" "999" "-C")))
+        (pospago-local
+         (sql-product  'ms)
+         (sql-user     "SA")
+         (sql-server   "localhost,1433")
+         (sql-database "pospago")
+         (sql-ms-options '("-w" "999" "-C")))
+        (directions-local
+         (sql-product  'ms)
+         (sql-user     "SA")
+         (sql-server   "localhost,1433")
+         (sql-database "directions")
+         (sql-ms-options '("-w" "999" "-C")))
+        (esim-local-ms
+         (sql-product  'ms)
+         (sql-user     "SA")
+         (sql-server   "localhost,1433")
+         (sql-database "esim")
+         (sql-ms-options '("-w" "999" "-C")))
+        ;; MySQL
+        (pagosv2
+         (sql-product  'mysql)
+         (sql-user     "cristhian.gutierrez")
+         (sql-server   "198.50.124.11")
+         (sql-port     3306)
+         (sql-database "pagosv2")
+         (sql-password "FrXxXRV@HiLR@wZfdTiFweY4h&"))
+        (esim-prod
+         (sql-product  'mysql)
+         (sql-user     "cristhian.gutierrez")
+         (sql-server   "10.11.10.64")
+         (sql-port     3306)
+         (sql-database "esim")
+         (sql-password "uKxxpDvt3f@kHrA&t@tMqzDb7d"))
+        (esim-qa
+         (sql-product  'mysql)
+         (sql-user     "christian.gutierrez")
+         (sql-server   "10.11.10.103")
+         (sql-port     3306)
+         (sql-database "esim")
+         (sql-password "Z3oW~#yQEbZk2x3L&yK5"))
+        (esim-local
+         (sql-product  'mysql)
+         (sql-user     "root")
+         (sql-server   "127.0.0.1")
+         (sql-port     3306)
+         (sql-database "esim_db")
+         (sql-password "toast"))
+        (http-only
+         (sql-product  'mysql)
+         (sql-user     "root")
+         (sql-server   "127.0.0.1")
+         (sql-port     3306)
+         (sql-database "httponly")
+         (sql-password "toast"))
+        ;; PostgreSQL
+        (lapis-local
+         (sql-product  'postgres)
+         (sql-user     "cyan")
+         (sql-server   "127.0.0.1")
+         (sql-port     5432)
+         (sql-database "lapis")
+         (sql-password "toast"))))
 
 (defun clean-whitespace-region (start end)
   "Untabifies, removes trailing whitespace, and re-indents the region"
@@ -1961,4 +2038,37 @@ This mode uses highlight-regexp overlays instead of font-lock."
 
 (use-package docker
   :ensure t)
+
+(setq cal-tex-diary t
+      diary-file "~/diary"
+      cal-tex-preamble-extra "\\usepackage{graphicx}"
+      cal-tex-which-days '(0 1 2 3 4 5 6)
+      cal-tex-buffer "calendar.tex")
+
+(defun cy/weekly-planner (&optional date)
+  "Generate and open a weekly planner PDF for the week containing DATE.
+Defaults to the current week.  With prefix arg, prompts for a date."
+  (interactive
+   (list (if current-prefix-arg
+             (let ((d (read-string "Date (YYYY-MM-DD): "
+                                   (format-time-string "%Y-%m-%d"))))
+               (mapcar #'string-to-number (split-string d "-")))
+           nil)))
+  (let* ((out-dir  (expand-file-name "~/roam/"))
+         (tex-file (expand-file-name "calendar.tex" out-dir))
+         (pdf-file (expand-file-name "calendar.pdf" out-dir))
+         (default-directory out-dir))
+    (calendar)
+    (when date
+      (calendar-goto-date (list (nth 1 date) (nth 2 date) (nth 0 date))))
+    (cal-tex-cursor-week-iso)
+    (with-current-buffer "calendar.tex"
+      (write-file tex-file))
+    (shell-command (format "pdflatex -output-directory %s %s" out-dir tex-file))
+    (find-file pdf-file)))
+
+(load (expand-file-name "cy-bookmarks"      user-emacs-directory))
+(load (expand-file-name "cy-twitch-emotes" user-emacs-directory))
+(load (expand-file-name "cy-twitch-vods"   user-emacs-directory))
+(load (expand-file-name "cy-swanky"        user-emacs-directory))
 
