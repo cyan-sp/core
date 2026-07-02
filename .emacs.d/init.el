@@ -1748,6 +1748,14 @@ DIRECTION should be 'forward or 'backward."
   :ensure t
   :commands (dired-sidebar-toggle-sidebar))
 
+(defun cy/browse-url-qutebrowser (url &optional _)
+  "Open URL in Windows qutebrowser from WSL."
+  (start-process "qutebrowser" nil
+                 "/mnt/c/Users/ord-back-11/AppData/Local/Programs/qutebrowser/qutebrowser.exe"
+                 url))
+
+(setq browse-url-browser-function #'cy/browse-url-qutebrowser)
+
 (use-package elfeed
   :bind ((:map elfeed-search-mode-map
                ("U" . elfeed-update))
