@@ -476,6 +476,58 @@ Version 2016-11-22"
   :ensure t
   :hook (groovy-mode . (lambda () (setq truncate-lines t))))
 
+(defvar cy/ord-projects
+  '((b-pospago-core          . "sdk use java 8.0.442-zulu && clear && grails clean && grails run-app")
+    (b-pospago-esim          . "sdk use java 8.0.442-zulu && clear && grails clean && grails run-app")
+    (b-esim                  . "sdk use java 8.0.442-zulu && clear && grails clean && grails run-app")
+    (b-pospago-direcciones   . "sdk use java 8.0.442-zulu && clear && grails clean && grails run-app")
+    (bw-pospago-webhook      . "sdk use java 8.0.442-zulu && clear && grails clean && grails run-app")
+    (validar-tripletas/backend . "sdk use java 8.0.442-zulu && clear && grails clean && grails run-app")
+    (b-inew                  . "sdk use java 8.0.442-zulu && clear && grails clean && grails run-app")
+    (directions              . "sdk use java 21.0.11-zulu && clear && ./mvnw spring-boot:run"))
+  "Alist of ord project names to their run commands.")
+
+(defun cy/ord-current-project ()
+  "Return the ord project name if currently visiting a file under ~/ord/."
+  (when-let ((root (locate-dominating-file default-directory "grails-app")))
+    (let* ((base (expand-file-name "~/ord/"))
+           (rel  (file-relative-name (expand-file-name root) base)))
+      (when (not (string-prefix-p ".." rel))
+        (string-trim-right rel "/")))))
+
+(defun cy/ord-read-project ()
+  "Prompt for an ord project."
+  (completing-read "Project: " (mapcar #'car cy/ord-projects)))
+
+(defun cy/ord-run ()
+  "Run the current or selected ord project."
+  (interactive)
+  (let* ((name (or (cy/ord-current-project) (cy/ord-read-project)))
+         (cmd  (alist-get (intern name) cy/ord-projects))
+         (dir  (expand-file-name (format "~/ord/%s/" name))))
+    (let ((default-directory dir))
+      (vterm (format "*vterm:ord:%s*" name))
+      (vterm-send-string cmd)
+      (vterm-send-return))))
+
+(defun cy/ord-find-file ()
+  "Find a file in the current or selected ord project."
+  (interactive)
+  (let* ((name (or (cy/ord-current-project) (cy/ord-read-project)))
+         (default-directory (expand-file-name (format "~/ord/%s/" name))))
+    (project-find-file)))
+
+(defun cy/ord-config-file ()
+  "Open the config file for the current or selected ord project."
+  (interactive)
+  (let* ((name  (or (cy/ord-current-project) (cy/ord-read-project)))
+         (dir   (expand-file-name (format "~/internal/ord/%s/keys/" name)))
+         (files (when (file-directory-p dir)
+                  (directory-files dir t "\\.groovy$"))))
+    (if (= (length files) 1)
+        (find-file (car files))
+      (find-file (completing-read "Config: " files)))))
+
 (defvar grails-logs-hidden nil
   "Track whether Grails logs are currently hidden")
 
@@ -1505,29 +1557,6 @@ The completion candidates include the Git status of each file."
 ;;           yasnippet-snippets-dir))
 ;;   (setq yas-triggers-in-field t)
 ;;   (yas-global-mode 1))
-
-(defun insert-groovy-debug-line ()
-    "Insert a Groovy println statement with current file and line number.
-  If region is active, use selected text as variable name in both places."
-    (interactive)
-    (let ((filename (file-name-nondirectory (buffer-file-name)))
-          (line-num (line-number-at-pos))
-          (variable (if (use-region-p)
-                        (buffer-substring-no-properties (region-beginning) (region-end))
-                      ""))
-          (current-indentation (save-excursion
-                                 (back-to-indentation)
-                                 (current-column))))
-      ;; Don't delete the region - just use it as the variable name
-      (end-of-line)
-      (newline)
-      ;; Insert proper indentation using spaces
-      (insert (make-string current-indentation ?\s))
-      (if (string-empty-p variable)
-          (insert (format "println \"\\n(O.o) %s::%d ${}\\n\"" filename line-num))
-        (insert (format "println \"\\n(O.o) %s::%d %s ${%s}\\n\"" filename line-num variable variable)))))
-  ;; Bind to a key if desired
-(define-key groovy-mode-map (kbd "C-c d") 'insert-groovy-debug-line)
 
 (use-package org-ql)
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
