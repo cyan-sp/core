@@ -25,3 +25,5 @@
 /.emacs.d/tree-sitter/
 /.emacs.d/eyebrowse-restore/
 /.emacs.d/eln-cache/
+/.emacs.d/nov-places
+/.emacs.d/twitch-emotes/
