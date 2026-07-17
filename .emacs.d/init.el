@@ -23,8 +23,8 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default  nil :family "hasklig" :weight 'normal    :height 100)
-(set-face-attribute 'variable-pitch  nil :family "IBM Plex Sans Devanagari" :weight 'normal    :height 100)
+(set-face-attribute 'default  nil :family "hasklig" :weight 'normal    :height 105)
+(set-face-attribute 'variable-pitch  nil :family "inter" :weight 'semi-light    :height 110)
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -484,7 +484,9 @@ Version 2016-11-22"
     (bw-pospago-webhook      . "sdk use java 8.0.442-zulu && clear && grails clean && grails run-app")
     (validar-tripletas/backend . "sdk use java 8.0.442-zulu && clear && grails clean && grails run-app")
     (b-inew                  . "sdk use java 8.0.442-zulu && clear && grails clean && grails run-app")
-    (directions              . "sdk use java 21.0.11-zulu && clear && ./mvnw spring-boot:run"))
+    (directions              . "sdk use java 21.0.11-zulu && clear && ./mvnw spring-boot:run")
+    (b-pospay-gateway        . "sdk use java 21.0.11-zulu && clear && ./mvnw spring-boot:run")
+    (b-pospay-registry       . "sdk use java 21.0.11-zulu && clear && ./mvnw spring-boot:run"))
   "Alist of ord project names to their run commands.")
 
 (defun cy/ord-current-project ()
@@ -1062,7 +1064,7 @@ Version 2016-11-22"
   (setq popper-reference-buffers
         '("*slime-repl uv-python*"
           "*Flymake diagnostics for `main.rs'*"
-          "\\*vterm.*\\*"
+          "\\*vterm:ord:.+\\*"
           "\\*claude.*\\*")
         popper-group-function #'popper-group-by-project)
   (popper-mode +1)
@@ -1785,6 +1787,9 @@ DIRECTION should be 'forward or 'backward."
           "https://flandrew.srht.site/listful/feed/all.xml"
           "https://scheatkode.com/rss.xml"
           ;; https://lite.duckduckgo.com/lite
+          "https://www.d12frosted.io/feed.xml"
+          "https://andros.dev/"
+          "https://yogthos.net/feed.xml"
 )))
 
 (use-package anki-editor
