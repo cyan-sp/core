@@ -12,6 +12,7 @@
 ;; .eee....    .<<!   ?<<   .<<`   .aa{    aaA     ?CCCCCCC!    ....(s=: .!!-
 ;;  .?eeeee`                       .AA!    AAA                  .ssss<s!   .!!
 
+;; (setq package-install-upgrade-built-in t)
 (setq user-full-name "cyan"
       user-mail-address "cyan.mv@gmail.com")
 
@@ -573,9 +574,9 @@ Version 2016-11-22"
     (esimProd . ":engine mysql :dbuser cristhian.gutierrez :dbhost 10.11.10.64 :dbport 3306 :database esim :dbpassword uKxxpDvt3f@kHrA&t@tMqzDb7d")
     (esimQA . ":engine mysql :dbuser christian.gutierrez :dbhost 10.11.10.103 :dbport 3306 :database esim :dbpassword Z3oW~#yQEbZk2x3L&yK5")
     (esimLocal . ":engine mysql :dbuser root :dbhost 127.0.0.1 :dbport 3306 :database esim_db :dbpassword toast")
-    (pospago . ":engine mssql :dbuser christian.gutierrez :dbhost 10.11.10.134,1434 :database pospago :cmdline \"-C\"")
-    (pospago-local . ":engine mssql :dbuser SA :dbhost localhost,1433 :database pospago :cmdline \"-C\"")
-    (directions-local . ":engine mssql :dbuser SA :dbhost localhost,1433 :database directions :cmdline \"-C\"")
+    (pospago . ":engine mssql :dbuser christian.gutierrez :dbhost 10.11.10.134,1434 :database pospago :cmdline \"-C -P VY4Ze2!JKj9gd+j\"")
+    (pospago-local . ":engine mssql :dbuser SA :dbhost localhost,1433 :database pospago :cmdline \"-C -P ::toast22S\"")
+    (directions-local . ":engine mssql :dbuser sa :dbhost localhost,1433 :database directions :cmdline \"-C -P ::toast22S\"")
     (esim-local-ms . ":engine mssql :dbuser SA :dbhost localhost,1433 :database esim :cmdline \"-C\"")
     (lapisLocal . ":engine postgres :dbuser cyan :dbhost 127.0.0.1 :dbport 5432 :database lapis :dbpassword toast")
     (httpOnly . ":engine mysql :dbuser root :dbhost 127.0.0.1 :dbport 3306 :database httponly :dbpassword toast")))
@@ -603,13 +604,13 @@ Version 2016-11-22"
          (sql-user     "SA")
          (sql-server   "localhost,1433")
          (sql-database "pospago")
-         (sql-ms-options '("-w" "999" "-C")))
+         (sql-ms-options '("-w" "999" "-C" "-P" "::toast22S")))
         (directions-local
          (sql-product  'ms)
-         (sql-user     "SA")
+         (sql-user     "sa")
          (sql-server   "localhost,1433")
          (sql-database "directions")
-         (sql-ms-options '("-w" "999" "-C")))
+         (sql-ms-options '("-w" "999" "-C" "-P" "::toast22S")))
         (esim-local-ms
          (sql-product  'ms)
          (sql-user     "SA")
@@ -1453,7 +1454,9 @@ The completion candidates include the Git status of each file."
       ;; No headings found
       (message "No headings found in today's daily note"))))
 
-(use-package olivetti)
+(use-package olivetti
+  :custom
+  (olivetti-body-width 0.80))
 
 (defun org-agenda-open-hook ()
   "Hook to be run when org-agenda is opened"
@@ -1826,7 +1829,7 @@ DIRECTION should be 'forward or 'backward."
   (define-key nethack-map-mode-map [right] #'nethack-command-east)
   (define-key nethack-map-mode-map [up]    #'nethack-command-north)
   (define-key nethack-map-mode-map [down]  #'nethack-command-south)
-  (load "~/.emacs.d/nethack-keys-colemak-dh.el")
+  ;; (load "~/.emacs.d/nethack-keys-colemak-dh.el")
   (add-hook 'nethack-map-mode-hook (lambda () (meow-mode -1) (puni-mode -1))))
 
 (use-package org-remark
