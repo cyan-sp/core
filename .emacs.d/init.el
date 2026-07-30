@@ -513,10 +513,10 @@ Version 2016-11-22"
       (vterm-send-string cmd)
       (vterm-send-return))))
 
-(defun cy/ord-find-file ()
-  "Find a file in the current or selected ord project."
+(defun cy/ord-goto ()
+  "Find a file in a selected ord project."
   (interactive)
-  (let* ((name (or (cy/ord-current-project) (cy/ord-read-project)))
+  (let* ((name (cy/ord-read-project))
          (default-directory (expand-file-name (format "~/ord/%s/" name))))
     (project-find-file)))
 
@@ -690,8 +690,8 @@ Version 2016-11-22"
   :hook (fennel-mode . eglot-ensure))
 
 (use-package lua-mode)
-(use-package love2d-fennel
-  :straight (:type git :host codeberg :repo "alexjgriffith/love2d-fennel.el" ))
+;; (use-package love2d-fennel
+;;   :straight (:type git :host codeberg :repo "alexjgriffith/love2d-fennel.el" ))
 
 (use-package flycheck
   :ensure t
@@ -800,6 +800,7 @@ Version 2016-11-22"
 (require 'ahk-mode)
 
 (use-package show-font)
+
 ;; This assumes you've installed the package via MELPA.
 ;; (use-package ligature
 ;;   :config
@@ -1456,7 +1457,9 @@ The completion candidates include the Git status of each file."
 
 (use-package olivetti
   :custom
-  (olivetti-body-width 0.80))
+  (olivetti-body-width 0.80)
+  :config
+  (add-hook 'magit-status-mode-hook #'olivetti-mode))
 
 (defun org-agenda-open-hook ()
   "Hook to be run when org-agenda is opened"
@@ -1607,7 +1610,15 @@ The completion candidates include the Git status of each file."
 
 ;; (global-smudge-remote-mode)
 
-(use-package vterm)
+(use-package vterm
+  :config
+  (define-key vterm-mode-map (kbd "M-p")
+    (lambda () (interactive) (vterm-send-key "<up>")))
+  (with-eval-after-load 'meow
+    (define-key meow-normal-state-keymap (kbd "M-p")
+      (lambda () (interactive)
+        (when (eq major-mode 'vterm-mode)
+          (vterm-send-key "<up>"))))))
 
 (with-eval-after-load "esh-opt"
   (autoload 'epe-theme-lambda "eshell-prompt-extras")
