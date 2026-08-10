@@ -3,15 +3,23 @@
 (setq server-socket-dir (expand-file-name "server" user-emacs-directory))
 (server-start)                          ;; shiori integration
 
-;;              .mmmmmmmmmmmmmm.                   .cccccccc!                .(.
-;;  .+eeeee.   .??:   +m<   <mm.    .aaaaaaaa.    ccC!           .+sssss{    (!!
-;; .ee:        .mm:   +mm   .mm_   .aa>   (aaA    cCC           .ss>         1!:
-;; .ee_        .mm:   +mm   .mm_   .aa{    aaA    ccC           .sss.        !!
-;; .ee_ <ee    .mm:   +mm   .mm_   .aa{ .(AaaA    cCC`           .<sssss    .!:
-;; .ee_        .mm:   +mm   .mm_   .aa{ .??aaA    cCCc......         .ss:   ..
-;; .eee....    .<<!   ?<<   .<<`   .aa{    aaA     ?CCCCCCC!    ....(s=: .!!-
-;;  .?eeeee`                       .AA!    AAA                  .ssss<s!   .!!
-
+;;                  .,.   ...                    .'.
+;;               .;c;loo:llooo:.               'lccol
+;;          lo;;c;.   .:'   .'col,.   '      ..'   lo
+;;          .,,.     ,.        .;oolcc..c'';'      o.
+;;                 ,:      .::.    .   ;c:,       ;;
+;;                c:   ''. 'lol                   c
+;;               co;;;'      lo                  :.
+;;               ;,.    ..   c,                 .;
+;;               .';cc:;oc     .         ,      c
+;;            .;l:'.  ...    .;        .,      .,
+;;          .ldc            ;,     ...;.       c
+;;          oddl,,'.      ,:.     :oo:        .;
+;;          .cl;.    .. .l:  ..  ;    ...      .'..  ...
+;;        .c;.    .;oo;l:do,:dl ,  ''.';:   .co'  .,:'.',.
+;;       :dc   ...,odd;.ll. od...co..'dd;..;dd:..      ;l.
+;;      'dddl;'  ;o:c. .;   ;;.  ;,. .,,..  ','.  .'....
+;;       ...       .
 ;; (setq package-install-upgrade-built-in t)
 (setq user-full-name "cyan"
       user-mail-address "cyan.mv@gmail.com")
@@ -24,7 +32,7 @@
 
 (set-frame-parameter (selected-frame) 'alpha '(100 100))
 
-(set-face-attribute 'default  nil :family "hasklig" :weight 'normal    :height 105)
+(set-face-attribute 'default  nil :family "hackgen" :weight 'normal    :height 120)
 (set-face-attribute 'variable-pitch  nil :family "inter" :weight 'semi-light    :height 110)
 
 (defvar bootstrap-version)
@@ -746,6 +754,11 @@ Version 2016-11-22"
         whisper-use-threads (/ (num-processors) 2)))
 
 (use-package treemacs)
+
+(use-package lsp-java
+  :straight t
+  :after lsp-mode
+  :hook (java-mode . lsp))
 
 (use-package rust-mode)
 
@@ -1818,9 +1831,6 @@ DIRECTION should be 'forward or 'backward."
 
 (use-package kana)
 
-(use-package nov)
-(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-
 (use-package pdf-tools
   :config
   (pdf-tools-install))
@@ -1875,7 +1885,7 @@ If region is active, transclude only selected lines."
     (kill-new transclude-line)
     (message "Transclusion link copied to clipboard: %s" transclude-line)))
 
-(with-eval-after-load 'nov  (org-remark-nov-mode +1))
+;; (with-eval-after-load 'nov  (org-remark-nov-mode +1))
 
 ;; Disable startup screen
 ;; Disable startup screen and set initial buffer
