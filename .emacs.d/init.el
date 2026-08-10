@@ -1406,9 +1406,9 @@ The completion candidates include the Git status of each file."
 
 (use-package org-mem)
 
-(setq org-directory "~/roam")
-(setq org-mem-watch-dirs '("~/roam"))
-(setq org-mem-do-sync-with-org-id t)
+(setq org-directory "~/cryo/")
+(setq org-mem-watch-dirs '("~/cryo/"))
+(setq org-mem-do-sync-with-org-id nil)
 (org-mem-updater-mode)
 (org-mem-all-entries)
 ;; org extras
@@ -1472,7 +1472,10 @@ The completion candidates include the Git status of each file."
   :custom
   (olivetti-body-width 0.80)
   :config
-  (add-hook 'magit-status-mode-hook #'olivetti-mode))
+  (add-hook 'magit-status-mode-hook #'olivetti-mode)
+  (add-hook 'elfeed-search-mode-hook #'olivetti-mode)
+  (add-hook 'elfeed-show-mode-hook #'olivetti-mode)
+  (add-hook 'prog-mode-hook #'olivetti-mode))
 
 (defun org-agenda-open-hook ()
   "Hook to be run when org-agenda is opened"
@@ -2032,16 +2035,14 @@ This mode uses highlight-regexp overlays instead of font-lock."
 (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
 
 (setq org-agenda-custom-commands
-      '(("d" "Daily Priorities"
-         ((tags-todo "+PRIORITY=\"A\"+TODO=\"TODO\""
-                     ((org-agenda-overriding-header "緊 Critical Tasks")))
-          (tags-todo "+PRIORITY=\"B\"+TODO=\"TODO\""
-                     ((org-agenda-overriding-header "重 Important Tasks")))
-          (agenda "" ((org-agenda-span 1)
-                     (org-agenda-overriding-header "今 Today's Schedule")))
-          (tags-todo "+PRIORITY=\"C\"+TODO=\"TODO\""
-                     ((org-agenda-overriding-header "他 Other Tasks"))))
-         ((org-agenda-sorting-strategy '(priority-down time-up))))))
+      '(("l" "Latent" alltodo ""
+         ((org-agenda-overriding-header "Latent")
+          (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))
+        ("e" "Elapsed" tags "CLOSED>=\"<-7d>\""
+         ((org-agenda-overriding-header "Elapsed")
+          (org-agenda-archives-mode t)
+          (org-agenda-prefix-format '((tags . " ")))
+          (org-agenda-remove-tags nil)))))
 
 (use-package elfeed-webkit
   :ensure
@@ -2091,7 +2092,7 @@ Defaults to the current week.  With prefix arg, prompts for a date."
                                    (format-time-string "%Y-%m-%d"))))
                (mapcar #'string-to-number (split-string d "-")))
            nil)))
-  (let* ((out-dir  (expand-file-name "~/roam/"))
+  (let* ((out-dir  (expand-file-name "~/cryo/"))
          (tex-file (expand-file-name "calendar.tex" out-dir))
          (pdf-file (expand-file-name "calendar.pdf" out-dir))
          (default-directory out-dir))
