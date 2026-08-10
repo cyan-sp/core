@@ -110,6 +110,30 @@
 (my-sqlcmd-toggle) ;; starts as local, call again to switch to prod
 
 
+(defun cy/grep-log-to-tmp (pattern logfile &optional host)
+  (let* ((short (substring pattern 0 8))
+         (logbase (file-name-base (expand-file-name logfile)))
+         (out (format "/tmp/esim-%s-%s%s.txt" short logbase (if host (format "-%s" host) "")))
+         (ssh-aliases '(("paym156" . "sshpass -p 'S?Znl$T?w2ts5IJq&?n@6^+%' ssh -p 2223 cristhian.gutierrez@184.107.108.156")
+                        ("paym195" . "sshpass -p '2{)s23iAE*Zy$7;miNG\\SKa<VL' ssh -p 2223 cristhian.gutierrez@184.107.108.195")
+                        ("esim62"  . "sshpass -p 'Xx2uDA#9hAQLxAVbA@#vLw' ssh christian.gutierrez@10.11.10.62")
+                        ("esim63"  . "sshpass -p '@ivHYMFQ79S59JbiAdYiw##' ssh christian.gutierrez@10.11.10.63")))
+         (ssh-cmd (when host (cdr (assoc host ssh-aliases))))
+         (cmd (if host
+                  (format "%s \"grep -aie '%s' %s\"" ssh-cmd pattern logfile)
+                (format "grep -aie '%s' %s" pattern (expand-file-name logfile)))))
+    (with-temp-file out
+      (insert (shell-command-to-string cmd)))
+    (format "[[%s][%s]]" out out)))
+
+(use-package es-mode
+  :straight t
+  :after org
+  :config
+  (setq es-default-url "http://10.11.10.203:9200")
+  (add-to-list 'auto-mode-alist '("\\.es$" . es-mode))
+  (require 'ob-elasticsearch))
+
 (provide 'cy-ordenaris)
 
 ;;; cy-ordenaris.el ends here

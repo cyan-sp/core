@@ -82,6 +82,7 @@
 ;; (global-set-key (kbd "M-c") 'capitalize-dwim)
 
 (global-set-key [remap dabbrev-expand] 'hippie-expand)
+(put 'narrow-to-region 'disabled nil)
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -137,6 +138,14 @@
   (vertico-cycle t)
   :init
   (vertico-mode))
+
+(use-package vertico-posframe
+  :straight t
+  :after vertico
+  :config
+  (vertico-posframe-mode 1))
+
+(global-completion-preview-mode t)
 
 (use-package marginalia
   :ensure t
@@ -795,6 +804,11 @@ Version 2016-11-22"
 
 (use-package markdown-mode)
 
+(use-package markdown-indent-mode
+  :hook (markdown-mode . markdown-indent-mode))
+
+(use-package csv-mode)
+
 (use-package py-isort)
 
 ;; Python environment
@@ -852,7 +866,7 @@ Version 2016-11-22"
   (setq tab-bar-close-button-show nil          ; Hide close button
         tab-bar-new-button-show nil            ; Hide new tab button  
         ;; tab-bar-tab-hints t                    ; Show tab numbers
-        tab-bar-show 1                         ; Always show tab bar
+        tab-bar-show nil
         ;; tab-bar-select-tab-modifiers '(meta)   ; Use M-1, M-2, etc for tab selection
         tab-bar-tab-name-truncated-max 50      ; Increase tab name length limit
         tab-bar-auto-width nil                 ; Don't auto-adjust width
@@ -1836,6 +1850,58 @@ DIRECTION should be 'forward or 'backward."
 
 (setq browse-url-browser-function #'cy/browse-url-qutebrowser)
 
+(defun cy/open-in-qutebrowser (file)
+  "Open FILE in qutebrowser using WSL UNC path."
+  (interactive (list (read-file-name "Open in qutebrowser: ")))
+  (let ((win-path (string-trim
+                   (shell-command-to-string
+                    (concat "wslpath -w " (shell-quote-argument (expand-file-name file)))))))
+    (start-process "qutebrowser" nil
+                   "/mnt/c/Users/ord-back-11/AppData/Local/Programs/qutebrowser/qutebrowser.exe"
+                   win-path)))
+
+(defun cy/open-in-qutebrowser-localhost (file)
+  "Open FILE via a localhost:9000 URL in qutebrowser, relative to build/."
+  (interactive
+   (list (read-file-name "Open in qutebrowser (localhost): " "~/soupault-site/build/")))
+  (let* ((base (expand-file-name "~/soupault-site/build/"))
+         (full (expand-file-name file))
+         (rel (file-relative-name full base))
+         (url (concat "http://localhost:9000/" rel)))
+    (start-process "qutebrowser" nil
+                   "/mnt/c/Users/ord-back-11/AppData/Local/Programs/qutebrowser/qutebrowser.exe"
+                   url)))
+
+(require 'dom)
+(require 'url)
+(require 'cl-lib)
+
+(defun demo-scrape (url)
+  "Download URL and return the Hacker News headlines as a list of conses.
+Each element is (TITLE . HREF)."
+  (with-current-buffer (url-retrieve-synchronously url t t 30)
+    (goto-char (point-min))
+    ;; Skip HTTP headers until the first blank line.
+    (re-search-forward "\r?\n\r?\n" nil t)
+    (let* ((dom (libxml-parse-html-region (point) (point-max)))
+           ;; On HN each headline is <span class="titleline"><a>...</a>.
+           (titles (dom-by-class dom "titleline")))
+      (mapcar (lambda (node)
+                (let ((a (dom-child-by-tag node 'a)))
+                  (cons (string-trim (dom-texts a))   ; link text
+                        (dom-attr a 'href))))          ; destination
+              titles))))
+
+(defun demo-scrape-hn ()
+  "Download the Hacker News front page and show the headlines in a buffer."
+  (interactive)
+  (let ((items (demo-scrape "https://news.ycombinator.com/")))
+    (with-output-to-temp-buffer "*HN headlines*"
+      (princ (format "Headlines found: %d\n\n" (length items)))
+      (cl-loop for (title . href) in items
+               for i from 1
+               do (princ (format "%2d. %s\n    %s\n\n" i title href))))))
+
 (use-package elfeed
   :bind ((:map elfeed-search-mode-map
                ("U" . elfeed-update))
@@ -2102,6 +2168,11 @@ This mode uses highlight-regexp overlays instead of font-lock."
   :bind (:map elfeed-show-mode-map
               ("%" . elfeed-webkit-toggle)))
 
+(use-package nov.el
+  :straight t
+  :config
+  (add-hook 'nov-mode-hook (lambda () (text-scale-increase 3))))
+
 (setq org-tag-alist
       '((:startgroup . nil)
         ("@task" . ?t)
@@ -2153,9 +2224,16 @@ Defaults to the current week.  With prefix arg, prompts for a date."
     (shell-command (format "pdflatex -output-directory %s %s" out-dir tex-file))
     (find-file pdf-file)))
 
+;; minted requires -shell-escape to call Pygments for syntax highlighting
+(setq org-latex-pdf-process
+      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
 (load (expand-file-name "cy-twitch-core"   user-emacs-directory))
 (load (expand-file-name "cy-twitch-vod-player" user-emacs-directory))
 ;; (load (expand-file-name "cy-swanky"        user-emacs-directory))
+
+(require 'ox-beamer)
 
 (with-eval-after-load 'ox
   (setq org-publish-project-alist
