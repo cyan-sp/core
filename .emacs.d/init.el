@@ -1838,6 +1838,21 @@ DIRECTION should be 'forward or 'backward."
 
 (define-key dired-mode-map (kbd "C-c x") 'dired-run-file-at-point)
 
+(defun my/dired-sort-by-size ()
+  (interactive) (dired-sort-other "-alGghS"))
+(defun my/dired-sort-by-date ()
+  (interactive) (dired-sort-other "-alGght"))
+(defun my/dired-sort-by-name ()
+  (interactive) (dired-sort-other "-alGgh"))
+(defun my/dired-sort-by-extension ()
+  (interactive) (dired-sort-other "-alGghX"))
+
+(with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "3") #'my/dired-sort-by-size)
+  (define-key dired-mode-map (kbd "4") #'my/dired-sort-by-date)
+  (define-key dired-mode-map (kbd "5") #'my/dired-sort-by-name)
+  (define-key dired-mode-map (kbd "6") #'my/dired-sort-by-extension))
+
 (use-package dired-sidebar
   :ensure t
   :commands (dired-sidebar-toggle-sidebar))
