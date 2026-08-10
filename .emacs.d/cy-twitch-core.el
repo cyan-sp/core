@@ -103,6 +103,19 @@
                                 img))))
             (cy/twitch-fetch-image id)))))))
 
+(defvar cy/twitch-live-process nil)
+(defvar cy/twitch-current-channel nil)
+
+
+(defun cy/twitch-kill ()
+  "Kill the currently playing Twitch stream."
+  (interactive)
+  (when (and cy/twitch-live-process (process-live-p cy/twitch-live-process))
+    (delete-process cy/twitch-live-process)
+    (setq cy/twitch-live-process nil))
+  (shell-command "taskkill.exe /F /IM vlc.exe 2>/dev/null")
+  (message "Stream stopped."))
+
 (defun cy/twitch-live ()
   "Show live followed Twitch channels, open chat or stream."
   (interactive)
@@ -128,19 +141,21 @@
                   (user (alist-get 'user_login stream))
                   (action (read-char "o=chat  s=stream  q=quit: ")))
              (cond
-              ((eq action ?o) (cy/twitch-chat user))
+              ((eq action ?o)
+               (setq cy/twitch-current-channel user)
+               (cy/twitch-chat user))
               ((eq action ?s)
                (let* ((quality (completing-read "Quality: "
                                                 '("best" "1080p60" "720p60" "720p" "480p" "360p" "worst")
                                                 nil t nil nil "best"))
                       (opacity (read-string "Opacity (0.1-1.0): " "0.8")))
-                 (start-process "streamlink" nil
-                                "streamlink"
-                                "--player" "/mnt/c/Program Files/VideoLAN/VLC/vlc.exe"
-                                "--player-args" (format "--qt-minimal-view --video-on-top --qt-opacity=%s" opacity)
-                                (concat "https://www.twitch.tv/" user)
-                                quality)))))))))))
-
+                 (setq cy/twitch-live-process
+                       (start-process "streamlink" nil
+                                      "streamlink"
+                                      "--player" "/mnt/c/Program Files/VideoLAN/VLC/vlc.exe"
+                                      "--player-args" (format "--qt-minimal-view --video-on-top --qt-opacity=%s" opacity)
+                                      (concat "https://www.twitch.tv/" user)
+                                      quality))))))))))))
 (defun cy/twitch-remove-emotes ()
   "Remove all emote image overlays from the current buffer."
   (save-excursion
