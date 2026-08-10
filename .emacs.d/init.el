@@ -1112,6 +1112,54 @@ Version 2016-11-22"
   ;; If using org-roam-protocol
   (require 'org-roam-protocol))
 
+(use-package vulpea
+  :straight t
+  :init
+  (setq vulpea-db-sync-directories '("~/cryo/"))
+  :config
+  (vulpea-db-autosync-mode +1)
+
+  (defun cryo-find ()
+    "Find and open a cryo entry."
+    (interactive)
+    (vulpea-find))
+
+  (defun cryo-new (title tags)
+    "Create a new cryo entry with TITLE and TAGS."
+    (interactive
+     (list (read-string "Title: ")
+           (read-string "Tags (space separated): ")))
+    (let* ((slug (replace-regexp-in-string "[^a-z0-9]+" "-"
+                                           (downcase (string-trim title))))
+           (date (format-time-string "%Y-%m-%d"))
+           (filename (expand-file-name
+                      (concat date "-" slug ".org")
+                      "~/cryo/"))
+           (id (org-id-new))
+           (tag-list (split-string (string-trim tags) " " t)))
+      (find-file filename)
+      (insert ":PROPERTIES:\n"
+              ":ID:       " id "\n"
+              ":END:\n"
+              "#+title: " title "\n"
+              (if tag-list
+                  (concat "#+filetags: :"
+                          (string-join tag-list ":") ":\n")
+                "")
+              "\n")))
+
+  (defun cryo-publish ()
+    "Export cryo entries via org-publish then build with soupault."
+    (interactive)
+    (org-publish "cryo-soupault" t)
+    (let ((default-directory "~/soupault-site/"))
+      (shell-command "soupault" "*cryo-publish*"))
+    (message "Cryo published."))
+
+  :bind (("C-c c f" . cryo-find)
+         ("C-c c n" . cryo-new)
+         ("C-c c p" . cryo-publish)))
+
 ;; Add this to your config temporarily, evaluate it, then remove it
 ;; (delete-file "~/.emacs.d/org-roam.db")
 
@@ -2105,8 +2153,29 @@ Defaults to the current week.  With prefix arg, prompts for a date."
     (shell-command (format "pdflatex -output-directory %s %s" out-dir tex-file))
     (find-file pdf-file)))
 
-(load (expand-file-name "cy-bookmarks"      user-emacs-directory))
 (load (expand-file-name "cy-twitch-core"   user-emacs-directory))
 (load (expand-file-name "cy-twitch-vod-player" user-emacs-directory))
-(load (expand-file-name "cy-swanky"        user-emacs-directory))
+;; (load (expand-file-name "cy-swanky"        user-emacs-directory))
+
+(with-eval-after-load 'ox
+  (setq org-publish-project-alist
+        '(("cryo-soupault-posts"
+           :base-directory "~/cryo/"
+           :base-extension "org"
+           :publishing-directory "~/soupault-site/site/posts/"
+           :publishing-function org-html-publish-to-html
+           :body-only t
+           :section-numbers nil
+           :with-toc nil
+           :with-author nil
+           :with-timestamps nil)
+          ("cryo-soupault-images"
+           :base-directory "~/cryo/"
+           :base-extension "png\\|jpg\\|gif\\|svg"
+           :publishing-directory "~/soupault-site/site/assets/images/"
+           :publishing-function org-publish-attachment)
+          ("cryo-soupault"
+           :components ("cryo-soupault-posts" "cryo-soupault-images")))))
+
+
 
